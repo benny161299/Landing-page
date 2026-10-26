@@ -1,0 +1,40 @@
+# Operating System Files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# Backups & Archives
+*.zip
+*.tar.gz
+*.rar
+*.bak
+*.backup
+
+# Hosting & Frameworks (Vercel / Netlify)
+.vercel
+.output/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment & Secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+
+# Node / Scratch (Local scripts & dependencies)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+*.log
+.gemini/
+scratch/
+

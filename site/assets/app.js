@@ -2,6 +2,8 @@
   'use strict';
   var doc = document;
   try {
+    localStorage.removeItem('theme');
+    doc.documentElement.removeAttribute('data-theme');
     if (localStorage.getItem('asw_accessibility_widget_dismissed') === 'true') {
       doc.documentElement.setAttribute('data-asw-dismissed', 'true');
     }

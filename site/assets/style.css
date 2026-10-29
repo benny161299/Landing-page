@@ -56,6 +56,7 @@ a { color: inherit; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 700; margin: 0; line-height: 1.2; }
 p { margin: 0; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+[hidden] { display: none !important; }
 
 .skip {
   position: absolute; inset-inline-start: 12px; top: -80px;

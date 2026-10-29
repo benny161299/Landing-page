@@ -270,6 +270,7 @@
     var next = $('.q-next', root), back = $('.q-back', root), prog = $('.bar-prog i', root), sn = $('.step-n', root);
     var i = 0;
     function show(n, focus) {
+      if (n < 0 || n >= steps.length) return;
       i = n;
       steps.forEach(function (s, k) { s.hidden = k !== n; });
       back.hidden = n === 0;
@@ -277,10 +278,14 @@
       next.disabled = !$('input:checked', steps[n]);
       prog.style.width = (n / steps.length * 100) + '%';
       sn.textContent = 'שאלה ' + (n + 1) + ' מתוך ' + steps.length;
-      if (focus) { var l = $('legend', steps[n]); l.setAttribute('tabindex', '-1'); l.focus(); }
+      if (focus) { var l = $('legend', steps[n]); if (l) { l.setAttribute('tabindex', '-1'); l.focus(); } }
     }
     steps.forEach(function (s) { s.addEventListener('change', function () { next.disabled = false; }); });
-    back.addEventListener('click', function () { show(i - 1, true); });
+    back.addEventListener('click', function () {
+      if (i > 0) {
+        show(i - 1, true);
+      }
+    });
     next.addEventListener('click', function () {
       if (i < steps.length - 1) { show(i + 1, true); return; }
       var a = {};

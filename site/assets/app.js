@@ -34,14 +34,21 @@
     if (!nav) return;
     nav.classList.remove('open');
     if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+    doc.body.classList.remove('nav-open');
     closeSubs();
   }
   if (menuBtn && nav) {
     menuBtn.addEventListener('click', function () {
       var o = nav.classList.toggle('open');
       menuBtn.setAttribute('aria-expanded', o ? 'true' : 'false');
+      doc.body.classList.toggle('nav-open', o);
     });
   }
+  window.addEventListener('resize', function () {
+    if (window.innerWidth > 1000 && nav && nav.classList.contains('open')) {
+      closeMenu();
+    }
+  });
   $$('.sub-btn').forEach(function (b) {
     b.addEventListener('click', function (e) {
       e.stopPropagation();

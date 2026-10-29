@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -46,11 +46,22 @@
 <section class="phead"><div class="wrap"><nav class="crumbs" aria-label="מיקום באתר"><ol><li><a href="/">דף הבית</a></li><li><a href="/tools/">כלים וחישובים</a></li><li aria-current="page">מחשבון השפעת דמי ניהול</li></ol></nav><h1>מחשבון השפעת דמי ניהול</h1><p class="lead">הפרש קטן באחוזים נראה זניח, אבל לאורך שנים הוא מצטבר. הזינו שני תרחישים והשוו.</p></div></section><section class="sec"><div class="wrap"><div class="calc" data-calc="fees">
   <div class="panel"><h2>הנתונים שלכם</h2><p class="hint">הנתונים להמחשה בלבד ואינם נתוני שוק. הזינו את הנתונים מהדוח שלכם.</p><fieldset class="fgroup"><legend>החיסכון</legend><div class="f"><label for="fee-bal">צבירה נוכחית</label><div class="row"><input type="number" id="fee-bal" data-k="bal" value="100000" min="0" max="5000000" step="5000" inputmode="decimal" aria-describedby="fee-bal-e"><span class="unit">₪</span><input type="range" data-r="bal" min="0" max="5000000" step="5000" value="100000" aria-hidden="true" tabindex="-1"></div><p class="err" id="fee-bal-e"></p></div><div class="f"><label for="fee-dep">הפקדה חודשית</label><div class="row"><input type="number" id="fee-dep" data-k="dep" value="1500" min="0" max="30000" step="100" inputmode="decimal" aria-describedby="fee-dep-e"><span class="unit">₪</span><input type="range" data-r="dep" min="0" max="30000" step="100" value="1500" aria-hidden="true" tabindex="-1"></div><p class="err" id="fee-dep-e"></p></div><div class="f"><label for="fee-years">שנות חיסכון</label><div class="row"><input type="number" id="fee-years" data-k="years" value="25" min="1" max="45" step="1" inputmode="decimal" aria-describedby="fee-years-e"><span class="unit">שנים</span><input type="range" data-r="years" min="1" max="45" step="1" value="25" aria-hidden="true" tabindex="-1"></div><p class="err" id="fee-years-e"></p></div><div class="f"><label for="fee-y">תשואה שנתית ברוטו (לפני דמי ניהול)</label><div class="row"><input type="number" id="fee-y" data-k="y" value="5" min="0" max="12" step="0.1" inputmode="decimal" aria-describedby="fee-y-e fee-y-h"><span class="unit">%</span><input type="range" data-r="y" min="0" max="12" step="0.1" value="5" aria-hidden="true" tabindex="-1"></div><p class="hint" id="fee-y-h">הנחה להמחשה, לא תחזית.</p><p class="err" id="fee-y-e"></p></div></fieldset><div class="seg"><fieldset class="fgroup"><legend>תרחיש א׳ (היום)</legend><div class="f"><label for="fee-fdA">דמי ניהול מהפקדה</label><div class="row"><input type="number" id="fee-fdA" data-k="fdA" value="2" min="0" max="6" step="0.1" inputmode="decimal" aria-describedby="fee-fdA-e"><span class="unit">%</span></div><p class="err" id="fee-fdA-e"></p></div><div class="f"><label for="fee-faA">דמי ניהול מצבירה</label><div class="row"><input type="number" id="fee-faA" data-k="faA" value="0.8" min="0" max="2" step="0.01" inputmode="decimal" aria-describedby="fee-faA-e"><span class="unit">%</span></div><p class="err" id="fee-faA-e"></p></div></fieldset><fieldset class="fgroup"><legend>תרחיש ב׳ (להשוואה)</legend><div class="f"><label for="fee-fdB">דמי ניהול מהפקדה</label><div class="row"><input type="number" id="fee-fdB" data-k="fdB" value="1" min="0" max="6" step="0.1" inputmode="decimal" aria-describedby="fee-fdB-e"><span class="unit">%</span></div><p class="err" id="fee-fdB-e"></p></div><div class="f"><label for="fee-faB">דמי ניהול מצבירה</label><div class="row"><input type="number" id="fee-faB" data-k="faB" value="0.3" min="0" max="2" step="0.01" inputmode="decimal" aria-describedby="fee-faB-e"><span class="unit">%</span></div><p class="err" id="fee-faB-e"></p></div></fieldset></div><p class="hint">ערכי הדוגמה מוצגים להמחשה. את דמי הניהול האמיתיים אפשר למצוא בדוח השנתי או בדוח הרבעוני של הקרן.</p></div>
   <div class="panel" aria-label="תוצאות">
-    <div class="outs"><div class="out big"><div class="k">ההפרש בצבירה בסוף התקופה (ב׳ פחות א׳)</div><div class="v" data-o="diff">–</div></div><div class="out "><div class="k">צבירה בתרחיש א׳</div><div class="v" data-o="a">–</div></div><div class="out "><div class="k">צבירה בתרחיש ב׳</div><div class="v" data-o="b">–</div></div></div>
-    <p class="verdict" data-o="verdict">–</p>
-    <h3 style="margin-top:22px;font-size:1.05rem">גידול הצבירה לאורך השנים</h3>
-    <svg class="chart" role="img" aria-label="גרף השוואת דמי ניהול" focusable="false"></svg>
-    <ul class="legend"><li><i style="background:var(--c2)"></i>תרחיש א׳</li><li><i style="background:var(--c1)"></i>תרחיש ב׳</li></ul>
+    <div class="calc-results" data-calc-results>
+      <div class="outs"><div class="out big"><div class="k">ההפרש בצבירה בסוף התקופה (ב׳ פחות א׳)</div><div class="v" data-o="diff">–</div></div><div class="out "><div class="k">צבירה בתרחיש א׳</div><div class="v" data-o="a">–</div></div><div class="out "><div class="k">צבירה בתרחיש ב׳</div><div class="v" data-o="b">–</div></div></div>
+      <p class="verdict" data-o="verdict">–</p>
+      <h3 style="margin-top:22px;font-size:1.05rem">גידול הצבירה לאורך השנים</h3>
+      <svg class="chart" role="img" aria-label="גרף השוואת דמי ניהול" focusable="false"></svg>
+      <ul class="legend"><li><i style="background:var(--c2)"></i>תרחיש א׳</li><li><i style="background:var(--c1)"></i>תרחיש ב׳</li></ul>
+    </div>
+    <div class="calc-error-box" data-calc-error role="alert" aria-live="assertive" hidden>
+      <div class="calc-error-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <div class="calc-error-content">
+        <p class="calc-error-title">לא ניתן לחשב תוצאות</p>
+        <p class="calc-error-msg" data-calc-error-msg>נא להזין ערכים תקינים בכל השדות.</p>
+      </div>
+    </div>
     <p class="sr" role="status" aria-live="polite" data-sum></p>
     <p class="fine-print">הכלי להמחשה בלבד: אינו תחזית, אינו כולל מס, אינפלציה או שינויים עתידיים בתנאים, ואינו ייעוץ אישי.</p>
   </div>

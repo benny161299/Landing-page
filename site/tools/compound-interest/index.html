@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
@@ -46,11 +46,22 @@
 <section class="phead"><div class="wrap"><nav class="crumbs" aria-label="מיקום באתר"><ol><li><a href="/">דף הבית</a></li><li><a href="/tools/">כלים וחישובים</a></li><li aria-current="page">מחשבון ריבית דריבית</li></ol></nav><h1>מחשבון ריבית דריבית</h1><p class="lead">ככל שהזמן ארוך יותר, התשואה עצמה מייצרת תשואה. הזינו נתונים וראו כמה מהסכום הסופי מקורו ברווח.</p></div></section><section class="sec"><div class="wrap"><div class="calc" data-calc="compound">
   <div class="panel"><h2>הנתונים שלכם</h2><p class="hint">הנתונים להמחשה בלבד ואינם נתוני שוק. הזינו את הנתונים מהדוח שלכם.</p><fieldset class="fgroup"><legend>החיסכון</legend><div class="f"><label for="cmp-init">סכום התחלתי</label><div class="row"><input type="number" id="cmp-init" data-k="init" value="50000" min="0" max="5000000" step="5000" inputmode="decimal" aria-describedby="cmp-init-e"><span class="unit">₪</span><input type="range" data-r="init" min="0" max="5000000" step="5000" value="50000" aria-hidden="true" tabindex="-1"></div><p class="err" id="cmp-init-e"></p></div><div class="f"><label for="cmp-monthly">הפקדה חודשית</label><div class="row"><input type="number" id="cmp-monthly" data-k="monthly" value="1000" min="0" max="30000" step="100" inputmode="decimal" aria-describedby="cmp-monthly-e"><span class="unit">₪</span><input type="range" data-r="monthly" min="0" max="30000" step="100" value="1000" aria-hidden="true" tabindex="-1"></div><p class="err" id="cmp-monthly-e"></p></div><div class="f"><label for="cmp-rate">תשואה שנתית</label><div class="row"><input type="number" id="cmp-rate" data-k="rate" value="5" min="0" max="12" step="0.1" inputmode="decimal" aria-describedby="cmp-rate-e cmp-rate-h"><span class="unit">%</span><input type="range" data-r="rate" min="0" max="12" step="0.1" value="5" aria-hidden="true" tabindex="-1"></div><p class="hint" id="cmp-rate-h">הנחה להמחשה, לא תחזית.</p><p class="err" id="cmp-rate-e"></p></div><div class="f"><label for="cmp-years">שנות חיסכון</label><div class="row"><input type="number" id="cmp-years" data-k="years" value="20" min="1" max="50" step="1" inputmode="decimal" aria-describedby="cmp-years-e"><span class="unit">שנים</span><input type="range" data-r="years" min="1" max="50" step="1" value="20" aria-hidden="true" tabindex="-1"></div><p class="err" id="cmp-years-e"></p></div></fieldset></div>
   <div class="panel" aria-label="תוצאות">
-    <div class="outs"><div class="out big"><div class="k">הסכום הסופי</div><div class="v" data-o="final">–</div></div><div class="out "><div class="k">סך ההפקדות</div><div class="v" data-o="put">–</div></div><div class="out "><div class="k">רווח מצטבר</div><div class="v" data-o="gain">–</div></div></div>
-    <p class="verdict" data-o="verdict">–</p>
-    <h3 style="margin-top:22px;font-size:1.05rem">גידול החיסכון לאורך השנים</h3>
-    <svg class="chart" role="img" aria-label="גרף גידול החיסכון וריבית דריבית" focusable="false"></svg>
-    <ul class="legend"><li><i style="background:var(--c1)"></i>הסכום הכולל</li><li><i style="background:var(--c2)"></i>סך ההפקדות</li></ul>
+    <div class="calc-results" data-calc-results>
+      <div class="outs"><div class="out big"><div class="k">הסכום הסופי</div><div class="v" data-o="final">–</div></div><div class="out "><div class="k">סך ההפקדות</div><div class="v" data-o="put">–</div></div><div class="out "><div class="k">רווח מצטבר</div><div class="v" data-o="gain">–</div></div></div>
+      <p class="verdict" data-o="verdict">–</p>
+      <h3 style="margin-top:22px;font-size:1.05rem">גידול החיסכון לאורך השנים</h3>
+      <svg class="chart" role="img" aria-label="גרף גידול החיסכון וריבית דריבית" focusable="false"></svg>
+      <ul class="legend"><li><i style="background:var(--c1)"></i>הסכום הכולל</li><li><i style="background:var(--c2)"></i>סך ההפקדות</li></ul>
+    </div>
+    <div class="calc-error-box" data-calc-error role="alert" aria-live="assertive" hidden>
+      <div class="calc-error-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+      </div>
+      <div class="calc-error-content">
+        <p class="calc-error-title">לא ניתן לחשב תוצאות</p>
+        <p class="calc-error-msg" data-calc-error-msg>נא להזין ערכים תקינים בכל השדות.</p>
+      </div>
+    </div>
     <p class="sr" role="status" aria-live="polite" data-sum></p>
     <p class="fine-print">הכלי להמחשה בלבד: אינו תחזית, אינו כולל מס, אינפלציה או שינויים עתידיים בתנאים, ואינו ייעוץ אישי.</p>
   </div>

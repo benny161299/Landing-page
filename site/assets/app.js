@@ -407,7 +407,7 @@
       return 'סכום סופי: ' + ils(g.final) + '. הפקדות: ' + ils(g.put) + '. רווח: ' + ils(gain) + '. ' + t;
     },
     self: function (o, v) {
-      if (v.retire <= v.age) { o.text('verdict', 'גיל הפרישה צריך להיות גבוה מהגיל הנוכחי.'); return ''; }
+      if (v.retire <= v.age) { return ''; }
       var yrs = v.retire - v.age, n = yrs * 12, i = Math.pow(1 + v.y / 100, 1 / 12) - 1;
       var ann = i > 0 ? (Math.pow(1 + i, n) - 1) / i : n;
       var cap = v.bal * Math.pow(1 + i, n) + v.dep * ann;
@@ -428,35 +428,178 @@
   $$('[data-calc]').forEach(function (root) {
     var type = root.getAttribute('data-calc'), els = {}, timer;
     var sum = $('[data-sum]', root), svg = $('svg.chart', root);
+    var resultsWrap = $('[data-calc-results]', root);
+    var errorBox = $('[data-calc-error]', root);
+    var errorMsg = $('[data-calc-error-msg]', root);
     var outs = {};
     $$('[data-o]', root).forEach(function (e) { outs[e.getAttribute('data-o')] = e; });
+
+    // Fallback if resultsWrap/errorBox are not in HTML
+    if (!resultsWrap) {
+      var panel = root.querySelectorAll('.panel')[1];
+      if (panel) {
+        var w = doc.createElement('div');
+        w.className = 'calc-results';
+        w.setAttribute('data-calc-results', '');
+        var children = Array.from(panel.childNodes).filter(function (c) {
+          return c.nodeType === 1 && !c.hasAttribute('data-sum') && !c.classList.contains('fine-print');
+        });
+        children.forEach(function (c) { w.appendChild(c); });
+        panel.insertBefore(w, panel.firstChild);
+        resultsWrap = w;
+      }
+    }
+    if (!errorBox && resultsWrap && resultsWrap.parentNode) {
+      var eb = doc.createElement('div');
+      eb.className = 'calc-error-box';
+      eb.setAttribute('data-calc-error', '');
+      eb.setAttribute('role', 'alert');
+      eb.setAttribute('aria-live', 'assertive');
+      eb.hidden = true;
+      eb.innerHTML = '<div class="calc-error-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div><div class="calc-error-content"><p class="calc-error-title">לא ניתן לחשב תוצאות</p><p class="calc-error-msg" data-calc-error-msg></p></div>';
+      resultsWrap.parentNode.insertBefore(eb, resultsWrap.nextSibling);
+      errorBox = eb;
+      errorMsg = eb.querySelector('[data-calc-error-msg]');
+    }
+
     var api = {
       svg: svg,
       num: function (k, val, f) { setNum(outs[k], val, f); },
       text: function (k, t) { if (outs[k]) outs[k].textContent = t; },
       cls: function (k, c) { if (outs[k]) { outs[k].classList.remove('pos', 'neg'); if (c) outs[k].classList.add(c); } }
     };
+
+    function clearResults() {
+      Object.keys(outs).forEach(function (k) {
+        if (outs[k]) {
+          cancelAnimationFrame(outs[k]._r);
+          delete outs[k]._v;
+          outs[k].textContent = '–';
+        }
+      });
+      if (outs['gap']) outs['gap'].classList.remove('pos', 'neg');
+      if (outs['verdict']) outs['verdict'].textContent = '–';
+      if (svg) {
+        svg.innerHTML = '';
+        svg.removeAttribute('aria-label');
+      }
+      clearTimeout(timer);
+      if (sum) sum.textContent = '';
+    }
+
+    function showError(msg) {
+      clearResults();
+      if (resultsWrap) {
+        resultsWrap.hidden = true;
+        resultsWrap.setAttribute('aria-hidden', 'true');
+        resultsWrap.style.display = 'none';
+      }
+      if (errorBox) {
+        errorBox.hidden = false;
+        errorBox.removeAttribute('aria-hidden');
+        errorBox.style.display = 'flex';
+        if (errorMsg) errorMsg.textContent = msg;
+      }
+    }
+
+    function showResults() {
+      if (errorBox) {
+        errorBox.hidden = true;
+        errorBox.setAttribute('aria-hidden', 'true');
+        errorBox.style.display = 'none';
+      }
+      if (resultsWrap) {
+        resultsWrap.hidden = false;
+        resultsWrap.removeAttribute('aria-hidden');
+        resultsWrap.style.display = '';
+      }
+    }
+
     $$('.f', root).forEach(function (f) {
       var n = $('input[type=number]', f), r = $('input[type=range]', f);
-      els[n.getAttribute('data-k')] = { f: f, n: n, err: $('.err', f) };
-      n.addEventListener('input', function () { if (r && n.value !== '' && !isNaN(parseFloat(n.value))) r.value = n.value; run(); });
+      els[n.getAttribute('data-k')] = { f: f, n: n, r: r, err: $('.err', f) };
+      n.addEventListener('input', function () {
+        if (r && n.value !== '' && !isNaN(parseFloat(n.value))) {
+          var val = parseFloat(n.value);
+          if (val >= +r.min && val <= +r.max) {
+            r.value = n.value;
+          }
+        }
+        run();
+      });
       if (r) r.addEventListener('input', function () { n.value = r.value; run(); });
     });
+
     function vals() {
-      var v = {};
+      var v = {}, hasErr = false, firstErr = '';
       Object.keys(els).forEach(function (k) {
-        var e = els[k], n = e.n, x = parseFloat(String(n.value).replace(',', '.')), mn = +n.min, mx = +n.max, bad = false;
-        if (isNaN(x)) { bad = true; x = parseFloat(n.defaultValue); }
-        else if (x < mn || x > mx) { bad = true; x = Math.min(mx, Math.max(mn, x)); }
+        var e = els[k], n = e.n;
+        var valStr = String(n.value).trim().replace(',', '.');
+        var x = parseFloat(valStr), mn = +n.min, mx = +n.max, bad = false;
+        if (valStr === '' || isNaN(x)) {
+          bad = true;
+          e.err.textContent = 'שדה חובה. נא להזין ערך מספרי.';
+        } else if (x < mn || x > mx) {
+          bad = true;
+          e.err.textContent = 'נא להזין ערך בין ' + fmtN(mn) + ' ל־' + fmtN(mx) + '.';
+        } else {
+          e.err.textContent = '';
+        }
         e.f.classList.toggle('bad', bad);
         n.setAttribute('aria-invalid', bad ? 'true' : 'false');
-        e.err.textContent = bad ? 'נא להזין ערך בין ' + fmtN(mn) + ' ל־' + fmtN(mx) + '.' : '';
-        v[k] = x;
+        if (bad) {
+          hasErr = true;
+          if (!firstErr) firstErr = e.err.textContent;
+        }
+        v[k] = isNaN(x) ? parseFloat(n.defaultValue) : x;
       });
-      return v;
+
+      // Cross-field validation for retirement calculator (self)
+      if (type === 'self' && els['age'] && els['retire']) {
+        var ageInput = els['age'], retireInput = els['retire'];
+        var ageRaw = String(ageInput.n.value).trim().replace(',', '.');
+        var retireRaw = String(retireInput.n.value).trim().replace(',', '.');
+        var ageNum = parseFloat(ageRaw);
+        var retireNum = parseFloat(retireRaw);
+
+        var ageValidRange = !isNaN(ageNum) && ageNum >= +ageInput.n.min && ageNum <= +ageInput.n.max;
+        var retireValidRange = !isNaN(retireNum) && retireNum >= +retireInput.n.min && retireNum <= +retireInput.n.max;
+
+        if (ageValidRange && retireValidRange) {
+          if (retireNum <= ageNum) {
+            hasErr = true;
+            ageInput.f.classList.add('bad');
+            ageInput.n.setAttribute('aria-invalid', 'true');
+            ageInput.err.textContent = 'גיל נוכחי חייב להיות נמוך מגיל הפרישה.';
+
+            retireInput.f.classList.add('bad');
+            retireInput.n.setAttribute('aria-invalid', 'true');
+            retireInput.err.textContent = 'גיל הפרישה צריך להיות גבוה מהגיל הנוכחי.';
+
+            firstErr = 'גיל הפרישה צריך להיות גבוה מהגיל הנוכחי.';
+          } else {
+            ageInput.f.classList.remove('bad');
+            ageInput.n.setAttribute('aria-invalid', 'false');
+            ageInput.err.textContent = '';
+
+            retireInput.f.classList.remove('bad');
+            retireInput.n.setAttribute('aria-invalid', 'false');
+            retireInput.err.textContent = '';
+          }
+        }
+      }
+
+      return { v: v, hasErr: hasErr, errMsg: firstErr };
     }
+
     function run() {
-      var s = CALC[type](api, vals());
+      var res = vals();
+      if (res.hasErr) {
+        showError(res.errMsg || 'נא להזין ערכים תקינים בכל השדות לצפייה בתוצאות.');
+        return;
+      }
+      showResults();
+      var s = CALC[type](api, res.v);
       clearTimeout(timer);
       if (svg && s) svg.setAttribute('aria-label', s);
       if (sum && s) timer = setTimeout(function () { sum.textContent = s; }, 800);

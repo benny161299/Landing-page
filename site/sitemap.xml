@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- עמוד הבית -->
   <url>
-    <loc>https://www.example.co.il/</loc>
+    <loc>https://rachel-lasker.vercel.app/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,55 +10,55 @@
 
   <!-- עמודי שירותים ומידע מרכזי -->
   <url>
-    <loc>https://www.example.co.il/pension/</loc>
+    <loc>https://rachel-lasker.vercel.app/pension/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/life-insurance/</loc>
+    <loc>https://rachel-lasker.vercel.app/life-insurance/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/health-insurance/</loc>
+    <loc>https://rachel-lasker.vercel.app/health-insurance/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/study-fund/</loc>
+    <loc>https://rachel-lasker.vercel.app/study-fund/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/investment-gemel/</loc>
+    <loc>https://rachel-lasker.vercel.app/investment-gemel/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/self-employed/</loc>
+    <loc>https://rachel-lasker.vercel.app/self-employed/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/retirement-planning/</loc>
+    <loc>https://rachel-lasker.vercel.app/retirement-planning/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/beit-shemesh/</loc>
+    <loc>https://rachel-lasker.vercel.app/beit-shemesh/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/about/</loc>
+    <loc>https://rachel-lasker.vercel.app/about/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -66,25 +66,25 @@
 
   <!-- כלים ומחשבונים -->
   <url>
-    <loc>https://www.example.co.il/tools/</loc>
+    <loc>https://rachel-lasker.vercel.app/tools/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/tools/management-fees/</loc>
+    <loc>https://rachel-lasker.vercel.app/tools/management-fees/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/tools/compound-interest/</loc>
+    <loc>https://rachel-lasker.vercel.app/tools/compound-interest/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/tools/self-employed-pension/</loc>
+    <loc>https://rachel-lasker.vercel.app/tools/self-employed-pension/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -92,25 +92,25 @@
 
   <!-- מגזין ומאמרים -->
   <url>
-    <loc>https://www.example.co.il/blog/</loc>
+    <loc>https://rachel-lasker.vercel.app/blog/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/blog/what-is-pension-clearinghouse/</loc>
+    <loc>https://rachel-lasker.vercel.app/blog/what-is-pension-clearinghouse/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/blog/how-to-check-management-fees/</loc>
+    <loc>https://rachel-lasker.vercel.app/blog/how-to-check-management-fees/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/blog/self-employed-pension-questions/</loc>
+    <loc>https://rachel-lasker.vercel.app/blog/self-employed-pension-questions/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -118,19 +118,19 @@
 
   <!-- דפים משפטיים -->
   <url>
-    <loc>https://www.example.co.il/accessibility-statement/</loc>
+    <loc>https://rachel-lasker.vercel.app/accessibility-statement/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/privacy-policy/</loc>
+    <loc>https://rachel-lasker.vercel.app/privacy-policy/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://www.example.co.il/terms-of-use/</loc>
+    <loc>https://rachel-lasker.vercel.app/terms-of-use/</loc>
     <lastmod>2026-10-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

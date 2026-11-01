@@ -1336,3 +1336,8 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
 .share a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; background: var(--band); color: var(--band-ink); transition: background .2s, transform .2s; }
 .share a:hover { background: var(--focus); color: #FFFFFF; transform: translateY(-2px); text-decoration: none; }
 .share a svg { width: 20px; height: 20px; }
+
+/* כפתור יצירת הקשר הצף קבוע בצד ימין — שמירת שטח פנוי כדי שלא יסתיר את כפתורי השיתוף באף מיקום גלילה */
+@media (max-width: 900px) {
+  .share { padding-right: 46px; }
+}

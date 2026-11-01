@@ -30,6 +30,7 @@ const CURRENT = {
   'blog': ['/blog/', 'page'],
   'blog/pension-actuarial-balance': ['/blog/', 'true'],
   'blog/study-fund-self-employed-tax': ['/blog/', 'true'],
+  'blog/study-fund-tax-free-withdrawal': ['/blog/', 'true'],
   'blog/severance-after-dismissal': ['/blog/', 'true'],
   'blog/double-health-insurance': ['/blog/', 'true'],
   'blog/halachic-tracks': ['/blog/', 'true'],

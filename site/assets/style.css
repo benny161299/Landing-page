@@ -1331,7 +1331,7 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
 
 
 /* שורת שיתוף מאמרים */
-.share { margin: 28px 0 0; padding-top: 20px; border-top: 1px solid var(--line); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.share { margin: 20px 0 24px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .share-label { font-weight: 600; color: var(--muted); font-size: .95rem; }
 .share a { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; background: var(--band); color: var(--band-ink); transition: background .2s, transform .2s; }
 .share a:hover { background: var(--focus); color: #FFFFFF; transform: translateY(-2px); text-decoration: none; }

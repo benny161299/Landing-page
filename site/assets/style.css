@@ -501,6 +501,7 @@ p { margin: 0; }
 
 .todo { background: #FFE9A8; color: #3b2d00; padding: 0 4px; border-radius: 3px; }
 .ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.btn-ghost .ltr { margin-right: .35em; } /* רווח בין "התקשרו:" למספר: בתוך flex רווח רגיל נבלע */
 .sr {
   position: absolute;
   width: 1px;

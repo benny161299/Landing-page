@@ -1329,3 +1329,21 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
   100% { transform: scale(1); opacity: 1; }
 }
 
+
+/* שורת שיתוף מאמרים */
+.share { margin: 16px 0 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.share-label { font-weight: 500; color: var(--muted); font-size: .88rem; }
+.share a { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: transparent; border: 1px solid rgba(20, 57, 61, .3); color: var(--band); transition: background .2s, color .2s, border-color .2s; }
+.share a:hover { background: var(--band); border-color: var(--band); color: #FFFFFF; text-decoration: none; }
+.share a svg { width: 18px; height: 18px; }
+
+/* כפתור יצירת הקשר הצף קבוע בצד ימין — שמירת שטח פנוי כדי שלא יסתיר את כפתורי השיתוף באף מיקום גלילה */
+@media (max-width: 900px) {
+  .share { padding-right: 46px; gap: 6px; }
+  .share-label { display: none; }
+}
+@media (max-width: 340px) {
+  .share { padding-right: 40px; }
+  .share a { width: 34px; height: 34px; }
+  .share a svg { width: 16px; height: 16px; }
+}

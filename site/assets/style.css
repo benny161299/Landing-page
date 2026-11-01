@@ -322,16 +322,19 @@ p { margin: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .marquee {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
     mask-image: none;
     -webkit-mask-image: none;
-    padding-bottom: 8px;
   }
   .marquee-track {
     animation: none;
-    width: auto;
+    width: 100%;
+  }
+  .marquee-group {
+    flex-wrap: wrap;
     justify-content: center;
+    width: 100%;
+    row-gap: 18px;
+    padding-inline-end: 0;
   }
   .marquee-group:nth-child(2) {
     display: none;

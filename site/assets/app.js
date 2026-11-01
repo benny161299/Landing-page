@@ -178,16 +178,22 @@
       if (!formData.has('_captcha')) formData.append('_captcha', 'false');
       if (!formData.has('_next')) formData.append('_next', window.location.origin + '/thank-you/');
 
+      var controller = new AbortController();
+      var timeoutId = setTimeout(function () { controller.abort(); }, 10000);
+
       fetch(ajaxUrl, {
         method: 'POST',
         headers: {
           'Accept': 'application/json'
         },
-        body: formData
+        body: formData,
+        signal: controller.signal
       })
       .then(function (res) {
+        clearTimeout(timeoutId);
         if (!res.ok) throw new Error('Network error: ' + res.status);
-        return res.json().catch(function () { return { success: 'true' }; });
+        // הצלחה רק בתשובת JSON תקינה עם שדה success מפורש; תשובה שאינה JSON (למשל דף HTML) נחשבת כשל
+        return res.json();
       })
       .then(function (data) {
         if (data.success === 'true' || data.success === true) {

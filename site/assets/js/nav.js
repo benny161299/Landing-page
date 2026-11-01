@@ -46,6 +46,7 @@
       const o = nav.classList.toggle('open');
       menuBtn.setAttribute('aria-expanded', o ? 'true' : 'false');
       doc.body.classList.toggle('nav-open', o);
+      if (o) { const first = nav.querySelector('button, a'); if (first) first.focus(); }
     });
   }
 

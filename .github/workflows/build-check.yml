@@ -1,0 +1,22 @@
+name: build-check
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  site-in-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build site from src
+        run: node build.js
+      - name: Verify site/ matches src/ (no stale or missing output)
+        run: |
+          if [ -n "$(git status --porcelain site/)" ]; then
+            echo "site/ is out of sync with src/. Run 'node build.js' and commit the result."
+            git status --porcelain site/
+            git diff site/ | head -100
+            exit 1
+          fi
+          echo "site/ is in sync with src/."

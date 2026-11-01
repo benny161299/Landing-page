@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>דף לא נמצא (404) | רחל לסקר</title>
+<meta name="description" content="הדף שחיפשתם לא נמצא. חזרו לדף הבית של רחל לסקר, סוכנת פנסיונית.">
+<meta name="robots" content="noindex, follow">
+<link rel="canonical" href="https://rachel-lasker.vercel.app/">
+<meta name="theme-color" content="#14393D">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Hebrew:wght@500;700&family=Noto+Sans+Hebrew:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  .page-404 {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4rem 1.5rem;
+  }
+  .page-404-inner { max-width: 480px; }
+  .page-404-code {
+    font-family: 'Noto Serif Hebrew', serif;
+    font-size: clamp(5rem, 20vw, 9rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--clr-primary, #14393D);
+    opacity: 0.12;
+    margin: 0 0 -0.5rem;
+    display: block;
+    user-select: none;
+  }
+  .page-404-title {
+    font-family: 'Noto Serif Hebrew', serif;
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 700;
+    color: var(--clr-primary, #14393D);
+    margin: 0 0 1rem;
+  }
+  .page-404-desc {
+    color: var(--clr-text-muted, #5a6a6b);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin: 0 0 2rem;
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">דלגו לתוכן הראשי</a>
+<!-- @include partials/header.html -->
+<main id="main">
+  <div class="page-404">
+    <div class="page-404-inner">
+      <span class="page-404-code" aria-hidden="true">404</span>
+      <h1 class="page-404-title">הדף לא נמצא</h1>
+      <p class="page-404-desc">יתכן שהכתובת שגויה, הדף הוסר או שהקישור שבו השתמשתם אינו תקין.</p>
+      <a class="btn btn-primary" href="/">חזרה לדף הבית</a>
+    </div>
+  </div>
+</main>
+<!-- @include partials/footer-404.html -->
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+<script src="/assets/js/core.js" defer></script>
+<script src="/assets/js/nav.js" defer></script>
+<script src="/assets/js/sienna.js" defer></script>
+<script src="/assets/js/widgets.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sienna-accessibility@latest/dist/sienna-accessibility.umd.js" defer></script>
+</body>
+</html>

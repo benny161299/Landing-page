@@ -28,6 +28,7 @@ const CURRENT = {
   'tools/management-fees': ['/tools/', 'true'],
   'tools/self-employed-pension': ['/tools/', 'true'],
   'blog': ['/blog/', 'page'],
+  'blog/pension-actuarial-balance': ['/blog/', 'true'],
   'blog/how-to-check-management-fees': ['/blog/', 'true'],
   'blog/pension-fees-comparison': ['/blog/', 'true'],
   'blog/investment-gemel-tax-cap': ['/blog/', 'true'],

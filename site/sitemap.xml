@@ -123,6 +123,7 @@
   </url>
   <url>
     <loc>https://rachel-lasker.vercel.app/blog/find-lost-pension-money/</loc>
+    <loc>https://rachel-lasker.vercel.app/blog/pension-annuity-factor/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -134,19 +135,10 @@
     <priority>0.6</priority>
   </url>
   <url>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     <loc>https://rachel-lasker.vercel.app/blog/study-fund-self-employed-tax/</loc>
-=======
     <loc>https://rachel-lasker.vercel.app/blog/study-fund-tax-free-withdrawal/</loc>
->>>>>>> origin/article/study-fund-tax-free-withdrawal
-=======
     <loc>https://rachel-lasker.vercel.app/blog/pension-disability-coverage/</loc>
->>>>>>> origin/article/pension-disability-coverage
-=======
     <loc>https://rachel-lasker.vercel.app/blog/managers-insurance-vs-pension-fund/</loc>
->>>>>>> origin/article/managers-insurance-vs-pension-fund
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

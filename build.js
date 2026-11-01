@@ -30,6 +30,7 @@ const CURRENT = {
   'blog': ['/blog/', 'page'],
   'blog/pension-actuarial-balance': ['/blog/', 'true'],
   'blog/find-lost-pension-money': ['/blog/', 'true'],
+  'blog/pension-annuity-factor': ['/blog/', 'true'],
   'blog/mortgage-life-insurance-options': ['/blog/', 'true'],
   'blog/study-fund-self-employed-tax': ['/blog/', 'true'],
   'blog/study-fund-tax-free-withdrawal': ['/blog/', 'true'],

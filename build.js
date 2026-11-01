@@ -29,6 +29,7 @@ const CURRENT = {
   'tools/self-employed-pension': ['/tools/', 'true'],
   'blog': ['/blog/', 'page'],
   'blog/pension-actuarial-balance': ['/blog/', 'true'],
+  'blog/children-savings-plan': ['/blog/', 'true'],
   'blog/find-lost-pension-money': ['/blog/', 'true'],
   'blog/pension-annuity-factor': ['/blog/', 'true'],
   'blog/mortgage-life-insurance-options': ['/blog/', 'true'],

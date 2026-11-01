@@ -31,6 +31,7 @@ const CURRENT = {
   'blog/pension-actuarial-balance': ['/blog/', 'true'],
   'blog/severance-after-dismissal': ['/blog/', 'true'],
   'blog/double-health-insurance': ['/blog/', 'true'],
+  'blog/halachic-tracks': ['/blog/', 'true'],
   'blog/how-to-check-management-fees': ['/blog/', 'true'],
   'blog/pension-fees-comparison': ['/blog/', 'true'],
   'blog/investment-gemel-tax-cap': ['/blog/', 'true'],

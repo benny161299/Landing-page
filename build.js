@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env node
+#!/usr/bin/env node
 /* build.js — שכבת תבניות לאתר רחל לסקר.
    מרכז את ה-header וה-footer המשותפים ב-src/partials/ ומרכיב את src/pages/
    לתוך site/ (פלט סטטי זהה, ללא תלויות). הרצה: node build.js

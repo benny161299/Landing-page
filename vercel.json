@@ -1,5 +1,6 @@
 {
   "outputDirectory": "site",
+  "buildCommand": "node build.js",
   "cleanUrls": true,
   "trailingSlash": true,
   "headers": [

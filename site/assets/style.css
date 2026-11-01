@@ -529,7 +529,7 @@ p { margin: 0; }
 .has-sub > .sub { position: absolute; inset-inline-start: 0; top: 100%; min-width: 250px; list-style: none; margin: 4px 0 0; padding: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 10px 30px rgba(10, 30, 30, .14); display: none; z-index: 40; }
 .has-sub > .sub.open { display: block; }
 .has-sub > .sub a { width: 100%; }
-.menu-btn { display: none; min-height: 44px; min-width: 44px; padding: 8px 12px; color: var(--ink); background: transparent; border: 1.5px solid var(--ink); border-radius: 999px; cursor: pointer; }
+.menu-btn { display: none; min-height: 44px; min-width: 44px; padding: 8px; color: var(--ink); background: transparent; border: 0; cursor: pointer; }
 .nav-close { display: none; }
 .top-end { display: flex; align-items: center; gap: 10px; }
 @media (max-width: 1000px) {

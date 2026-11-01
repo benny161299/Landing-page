@@ -52,6 +52,7 @@ function* walk(dir) {
   }
 }
 
+const written = new Set();
 let built = 0;
 for (const pagePath of walk(PAGES)) {
   const rel = path.relative(PAGES, pagePath).split(path.sep).join('/');
@@ -74,7 +75,20 @@ for (const pagePath of walk(PAGES)) {
   const outPath = path.join(OUT, rel);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, html);
+  written.add(rel);
   built++;
 }
 
-console.log(`Built ${built} pages into site/`);
+// ניקוי פלט HTML יתום: קובץ HTML ב-site/ ללא מקור ב-src/pages נמחק
+// (site/ הוא פלט מחולל; כל קובץ אחר — תמונות, css, js, robots — לא נוגע)
+let removed = 0;
+for (const outFile of walk(OUT)) {
+  const rel = path.relative(OUT, outFile).split(path.sep).join('/');
+  if (!written.has(rel)) {
+    fs.rmSync(outFile);
+    console.log(`Removed stale output: ${rel}`);
+    removed++;
+  }
+}
+
+console.log(`Built ${built} pages into site/${removed ? `, removed ${removed} stale` : ''}.`);

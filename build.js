@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+﻿#!/usr/bin/env node
 /* build.js — שכבת תבניות לאתר רחל לסקר.
    מרכז את ה-header וה-footer המשותפים ב-src/partials/ ומרכיב את src/pages/
    לתוך site/ (פלט סטטי זהה, ללא תלויות). הרצה: node build.js
@@ -30,6 +30,7 @@ const CURRENT = {
   'blog': ['/blog/', 'page'],
   'blog/how-to-check-management-fees': ['/blog/', 'true'],
   'blog/pension-fees-comparison': ['/blog/', 'true'],
+  'blog/investment-gemel-tax-cap': ['/blog/', 'true'],
   'blog/self-employed-pension-questions': ['/blog/', 'true'],
   'blog/what-is-pension-clearinghouse': ['/blog/', 'true'],
 };

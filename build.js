@@ -29,6 +29,7 @@ const CURRENT = {
   'tools/self-employed-pension': ['/tools/', 'true'],
   'blog': ['/blog/', 'page'],
   'blog/how-to-check-management-fees': ['/blog/', 'true'],
+  'blog/pension-fees-comparison': ['/blog/', 'true'],
   'blog/self-employed-pension-questions': ['/blog/', 'true'],
   'blog/what-is-pension-clearinghouse': ['/blog/', 'true'],
 };

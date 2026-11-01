@@ -28,6 +28,7 @@ const CURRENT = {
   'tools/management-fees': ['/tools/', 'true'],
   'tools/self-employed-pension': ['/tools/', 'true'],
   'blog': ['/blog/', 'page'],
+  'blog/double-health-insurance': ['/blog/', 'true'],
   'blog/how-to-check-management-fees': ['/blog/', 'true'],
   'blog/self-employed-pension-questions': ['/blog/', 'true'],
   'blog/what-is-pension-clearinghouse': ['/blog/', 'true'],

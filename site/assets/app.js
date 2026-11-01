@@ -37,6 +37,15 @@
     doc.body.classList.remove('nav-open');
     closeSubs();
   }
+  if (nav && !$('.nav-close', nav)) {
+    var navClose = doc.createElement('button');
+    navClose.type = 'button';
+    navClose.className = 'nav-close';
+    navClose.setAttribute('aria-label', 'סגור תפריט ניווט');
+    navClose.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>';
+    nav.insertBefore(navClose, nav.firstChild);
+    navClose.addEventListener('click', function () { closeMenu(); if (menuBtn) menuBtn.focus(); });
+  }
   if (menuBtn && nav) {
     menuBtn.addEventListener('click', function () {
       var o = nav.classList.toggle('open');

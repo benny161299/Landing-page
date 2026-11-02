@@ -54,6 +54,12 @@
           closeIcon('qc-trigger-icon qc-icon-close', 16, '2.5')
         ]),
         el('nav', { class: 'qc-menu', id: 'qc-menu', 'aria-label': 'אפשרויות יצירת קשר מהירה' }, [
+          el('div', { class: 'qc-head' }, [
+            el('span', { class: 'qc-head-title', text: 'איך נוח לך לדבר?' }),
+            el('button', { type: 'button', class: 'qc-head-close', id: 'qc-head-close', 'aria-label': 'סגור אפשרויות ליצירת קשר' }, [
+              closeIcon('', 15, '2.4')
+            ])
+          ]),
           el('a', {
             class: 'qc-btn qc-btn-wa',
             href: 'https://wa.me/972559535605?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A8%D7%97%D7%9C%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%99%D7%97%D7%94.',
@@ -79,6 +85,14 @@
     const trigger = doc.getElementById('qc-trigger');
     const backdrop = existing.querySelector('.qc-backdrop');
     const formBtn = doc.getElementById('qc-btn-scroll-form');
+    const headClose = doc.getElementById('qc-head-close');
+    if (headClose) {
+      headClose.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu(false);
+        if (trigger) trigger.focus();
+      });
+    }
 
     function toggleMenu(forceOpen) {
       const isOpen = typeof forceOpen === 'boolean' ? forceOpen : !existing.classList.contains('is-open');

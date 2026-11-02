@@ -1349,6 +1349,8 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
 }
 
 /* Homepage service categories */
-.svc-cat { font-family: var(--serif); font-size: 1.35rem; margin: 40px 0 0; }
-.svc-cat:first-of-type { margin-top: 8px; }
-.svc-cat + .svc { margin-top: 0; }
+.svc-group { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px 24px 8px; margin-top: 24px; }
+.svc-cat { font-family: var(--serif); font-size: 1.25rem; margin: 0 0 4px; display: flex; align-items: center; gap: 12px; }
+.svc-cat::before { content: ""; flex: none; width: 26px; height: 3px; border-radius: 2px; background: var(--brass-fill); }
+.svc-group .svc { margin-top: 0; border-bottom: 0; }
+@media (max-width: 860px) { .svc-group { padding: 16px 18px 4px; } }

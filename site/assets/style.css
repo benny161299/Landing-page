@@ -959,7 +959,7 @@ html.asw-image-tooltips img:not(.asw-menu img):not(.asw-widget img) {
   stroke: currentColor;
 }
 
-/* Open state: trigger keeps the phone, gets a brass active ring */
+/* Open state: trigger keeps the chat icon, gets a brass active ring */
 .quick-contact-widget.is-open .qc-trigger {
   box-shadow: -2px 3px 14px rgba(20, 57, 61, 0.35), 0 0 0 2px var(--brass-fill, #D1A862);
   animation: none;

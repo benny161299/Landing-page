@@ -1354,3 +1354,7 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
 .svc-cat::before { content: ""; flex: none; width: 26px; height: 3px; border-radius: 2px; background: var(--brass-fill); }
 .svc-group .svc { margin-top: 0; border-bottom: 0; }
 @media (max-width: 860px) { .svc-group { padding: 16px 18px 4px; } }
+
+/* Homepage tools band icons */
+.tools-h2 svg { display: inline-block; vertical-align: -9px; margin-inline-end: 10px; color: var(--brass-fill); }
+.tile-ico { display: block; color: var(--brass-fill); margin-bottom: 14px; }

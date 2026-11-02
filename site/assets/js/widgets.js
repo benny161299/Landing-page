@@ -91,8 +91,16 @@
     }
 
     if (trigger) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       trigger.addEventListener('click', (e) => {
         e.stopPropagation();
+        if (!reduceMotion.matches) {
+          const ripple = doc.createElement('span');
+          ripple.className = 'qc-ripple';
+          ripple.setAttribute('aria-hidden', 'true');
+          ripple.addEventListener('animationend', () => ripple.remove());
+          trigger.appendChild(ripple);
+        }
         toggleMenu();
       });
     }

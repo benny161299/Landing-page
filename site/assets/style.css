@@ -1347,3 +1347,8 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
   .share a { width: 34px; height: 34px; }
   .share a svg { width: 16px; height: 16px; }
 }
+
+/* Homepage service categories */
+.svc-cat { font-family: var(--serif); font-size: 1.35rem; margin: 40px 0 0; }
+.svc-cat:first-of-type { margin-top: 8px; }
+.svc-cat + .svc { margin-top: 0; }

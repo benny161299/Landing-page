@@ -1347,3 +1347,14 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
   .share a { width: 34px; height: 34px; }
   .share a svg { width: 16px; height: 16px; }
 }
+
+/* Homepage service categories */
+.svc-group { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px 24px 8px; margin-top: 24px; }
+.svc-cat { font-family: var(--serif); font-size: 1.25rem; margin: 0 0 4px; display: flex; align-items: center; gap: 12px; }
+.svc-cat::before { content: ""; flex: none; width: 26px; height: 3px; border-radius: 2px; background: var(--brass-fill); }
+.svc-group .svc { margin-top: 0; border-bottom: 0; }
+@media (max-width: 860px) { .svc-group { padding: 16px 18px 4px; } }
+
+/* Homepage tools band icons */
+.tools-h2 svg { display: inline-block; vertical-align: -9px; margin-inline-end: 10px; color: var(--brass-fill); }
+.tile-ico { display: block; color: var(--brass-fill); margin-bottom: 14px; }

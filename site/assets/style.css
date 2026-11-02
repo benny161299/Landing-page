@@ -280,6 +280,11 @@ p { margin: 0; }
 .marquee-item img[src*="migdal"] { height: 34px; max-width: 98px; }
 .marquee-item img[src*="meitav"] { height: 36px; max-width: 80px; }
 
+/* Mobile: two rows scrolling in opposite directions (replaces the single row) */
+.marquee-rows {
+  display: none;
+}
+
 @keyframes marquee-scroll {
   0% {
     transform: translateX(0);
@@ -297,7 +302,20 @@ p { margin: 0; }
     font-size: 0.88rem;
     margin-bottom: 14px;
   }
-  .marquee-track {
+  .marquee-single {
+    display: none;
+  }
+  .marquee-rows {
+    display: grid;
+    gap: 16px;
+  }
+  .marquee-rows .marquee-track {
+    animation-duration: 28s;
+  }
+  .marquee-row-b .marquee-track {
+    animation-direction: reverse;
+  }
+  .marquee-single .marquee-track {
     animation-duration: 48s;
   }
   .marquee-group {

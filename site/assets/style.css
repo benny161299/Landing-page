@@ -903,8 +903,8 @@ html.asw-image-tooltips img:not(.asw-menu img):not(.asw-widget img) {
   right: 0;
   bottom: calc(90px + env(safe-area-inset-bottom, 0px));
   z-index: 1000;
-  width: 35px;
-  height: 40px;
+  width: 42px;
+  height: 48px;
   padding: 0 2px 0 0;
   background: var(--cta, #14393D);
   color: #FFFFFF;
@@ -947,8 +947,8 @@ html.asw-image-tooltips img:not(.asw-menu img):not(.asw-widget img) {
 }
 
 .qc-trigger-icon {
-  width: 16px;
-  height: 16px;
+  width: 19px;
+  height: 19px;
   fill: currentColor;
   display: block;
   transition: transform 0.25s ease;
@@ -959,7 +959,7 @@ html.asw-image-tooltips img:not(.asw-menu img):not(.asw-widget img) {
   stroke: currentColor;
 }
 
-/* Open state: trigger keeps the phone, gets a brass active ring */
+/* Open state: trigger keeps the chat icon, gets a brass active ring */
 .quick-contact-widget.is-open .qc-trigger {
   box-shadow: -2px 3px 14px rgba(20, 57, 61, 0.35), 0 0 0 2px var(--brass-fill, #D1A862);
   animation: none;

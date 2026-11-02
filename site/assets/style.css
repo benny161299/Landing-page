@@ -939,12 +939,7 @@ html.asw-image-tooltips img:not(.asw-menu img):not(.asw-widget img) {
   outline-offset: 2px;
 }
 
-.quick-contact-widget.is-open .qc-trigger {
-  transform: translateX(0);
-  background: var(--cta, #14393D);
-  box-shadow: -3px 4px 18px rgba(20, 57, 61, 0.45);
-  animation: none;
-}
+
 
 .qc-trigger-icon {
   width: 16px;
@@ -959,45 +954,101 @@ html.asw-image-tooltips img:not(.asw-menu img):not(.asw-widget img) {
   stroke: currentColor;
 }
 
-.quick-contact-widget.is-open .qc-icon-phone {
-  display: none;
-}
-.quick-contact-widget.is-open .qc-icon-close {
-  display: block;
-}
-
-/* Popover Menu Card */
+/* Morphing docked panel: the side button itself grows into the contact panel */
 .qc-menu {
   position: fixed;
-  right: 44px;
-  bottom: calc(70px + env(safe-area-inset-bottom, 0px));
-  z-index: 1000;
-  width: 210px;
-  max-width: calc(100vw - 56px);
+  right: 0;
+  bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
   background: var(--surface, #FFFFFF);
   border: 1px solid var(--line, #CFDAD6);
-  border-radius: 16px;
-  padding: 10px;
+  border-right: none;
+  border-radius: 999px 0 0 999px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  box-shadow: 0 14px 36px rgba(20, 57, 61, 0.2), 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: -4px 10px 34px rgba(20, 57, 61, 0.22), 0 2px 8px rgba(0, 0, 0, 0.08);
   opacity: 0;
   visibility: hidden;
-  transform: scale(0.88) translateX(12px);
-  transform-origin: bottom right;
-  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-              opacity 0.2s ease,
-              visibility 0.22s;
+  overflow: hidden;
+  transition: width 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+              height 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+              border-radius 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.36s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.14s ease,
+              visibility 0.36s;
   pointer-events: none;
 }
 
 .quick-contact-widget.is-open .qc-menu {
+  width: min(248px, calc(100vw - 28px));
+  height: 226px;
+  border-radius: 20px 0 0 20px;
+  padding: 12px;
   opacity: 1;
   visibility: visible;
-  transform: scale(1) translateX(0);
   pointer-events: auto;
 }
+
+/* Panel header: title + close */
+.qc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 2px 2px 4px;
+}
+.qc-head-title {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--ink, #10221F);
+  white-space: nowrap;
+}
+.qc-head-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted, #5C6B68);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.qc-head-close:hover,
+.qc-head-close:focus-visible {
+  background: rgba(20, 57, 61, 0.08);
+  color: var(--ink, #10221F);
+}
+
+/* Trigger fades into the panel while open (no phone-to-X swap) */
+.quick-contact-widget.is-open .qc-trigger {
+  opacity: 0;
+  transform: scale(0.7);
+  pointer-events: none;
+}
+
+/* Panel contents enter after the morph mostly completes */
+.qc-menu > * {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.quick-contact-widget.is-open .qc-menu > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.quick-contact-widget.is-open .qc-menu > *:nth-child(1) { transition-delay: 0.16s; }
+.quick-contact-widget.is-open .qc-menu > *:nth-child(2) { transition-delay: 0.21s; }
+.quick-contact-widget.is-open .qc-menu > *:nth-child(3) { transition-delay: 0.26s; }
+.quick-contact-widget.is-open .qc-menu > *:nth-child(4) { transition-delay: 0.31s; }
 
 /* Options inside Menu */
 .qc-btn {

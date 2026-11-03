@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- עמוד הבית -->
   <url>
-    <loc>https://rachel-lasker.vercel.app/</loc>
+    <loc>https://www.lasker-insurances.com/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,79 +10,79 @@
 
   <!-- עמודי שירותים ומידע מרכזי -->
   <url>
-    <loc>https://rachel-lasker.vercel.app/pension/</loc>
+    <loc>https://www.lasker-insurances.com/pension/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/life-insurance/</loc>
+    <loc>https://www.lasker-insurances.com/life-insurance/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/health-insurance/</loc>
+    <loc>https://www.lasker-insurances.com/health-insurance/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/study-fund/</loc>
+    <loc>https://www.lasker-insurances.com/study-fund/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/critical-illness/</loc>
+    <loc>https://www.lasker-insurances.com/critical-illness/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/personal-accident/</loc>
+    <loc>https://www.lasker-insurances.com/personal-accident/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/gemel/</loc>
+    <loc>https://www.lasker-insurances.com/gemel/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/managers-insurance/</loc>
+    <loc>https://www.lasker-insurances.com/managers-insurance/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/investment-gemel/</loc>
+    <loc>https://www.lasker-insurances.com/investment-gemel/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/self-employed/</loc>
+    <loc>https://www.lasker-insurances.com/self-employed/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/retirement-planning/</loc>
+    <loc>https://www.lasker-insurances.com/retirement-planning/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/beit-shemesh/</loc>
+    <loc>https://www.lasker-insurances.com/beit-shemesh/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/about/</loc>
+    <loc>https://www.lasker-insurances.com/about/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -90,25 +90,25 @@
 
   <!-- כלים ומחשבונים -->
   <url>
-    <loc>https://rachel-lasker.vercel.app/tools/</loc>
+    <loc>https://www.lasker-insurances.com/tools/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/tools/management-fees/</loc>
+    <loc>https://www.lasker-insurances.com/tools/management-fees/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/tools/compound-interest/</loc>
+    <loc>https://www.lasker-insurances.com/tools/compound-interest/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/tools/self-employed-pension/</loc>
+    <loc>https://www.lasker-insurances.com/tools/self-employed-pension/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -116,70 +116,70 @@
 
   <!-- מגזין ומאמרים -->
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/</loc>
+    <loc>https://www.lasker-insurances.com/blog/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/children-savings-plan/</loc>
+    <loc>https://www.lasker-insurances.com/blog/children-savings-plan/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/find-lost-pension-money/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/pension-annuity-factor/</loc>
+    <loc>https://www.lasker-insurances.com/blog/find-lost-pension-money/</loc>
+    <loc>https://www.lasker-insurances.com/blog/pension-annuity-factor/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/mortgage-life-insurance-options/</loc>
+    <loc>https://www.lasker-insurances.com/blog/mortgage-life-insurance-options/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/study-fund-self-employed-tax/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/study-fund-tax-free-withdrawal/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/pension-disability-coverage/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/managers-insurance-vs-pension-fund/</loc>
+    <loc>https://www.lasker-insurances.com/blog/study-fund-self-employed-tax/</loc>
+    <loc>https://www.lasker-insurances.com/blog/study-fund-tax-free-withdrawal/</loc>
+    <loc>https://www.lasker-insurances.com/blog/pension-disability-coverage/</loc>
+    <loc>https://www.lasker-insurances.com/blog/managers-insurance-vs-pension-fund/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/pension-actuarial-balance/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/severance-after-dismissal/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/double-health-insurance/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/halachic-tracks/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/agent-vs-marketer/</loc>
+    <loc>https://www.lasker-insurances.com/blog/pension-actuarial-balance/</loc>
+    <loc>https://www.lasker-insurances.com/blog/severance-after-dismissal/</loc>
+    <loc>https://www.lasker-insurances.com/blog/double-health-insurance/</loc>
+    <loc>https://www.lasker-insurances.com/blog/halachic-tracks/</loc>
+    <loc>https://www.lasker-insurances.com/blog/agent-vs-marketer/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/what-is-pension-clearinghouse/</loc>
+    <loc>https://www.lasker-insurances.com/blog/what-is-pension-clearinghouse/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/how-to-check-management-fees/</loc>
+    <loc>https://www.lasker-insurances.com/blog/how-to-check-management-fees/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/self-employed-pension-questions/</loc>
+    <loc>https://www.lasker-insurances.com/blog/self-employed-pension-questions/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/blog/pension-fees-comparison/</loc>
-    <loc>https://rachel-lasker.vercel.app/blog/investment-gemel-tax-cap/</loc>
+    <loc>https://www.lasker-insurances.com/blog/pension-fees-comparison/</loc>
+    <loc>https://www.lasker-insurances.com/blog/investment-gemel-tax-cap/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -187,19 +187,19 @@
 
   <!-- דפים משפטיים -->
   <url>
-    <loc>https://rachel-lasker.vercel.app/accessibility-statement/</loc>
+    <loc>https://www.lasker-insurances.com/accessibility-statement/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/privacy-policy/</loc>
+    <loc>https://www.lasker-insurances.com/privacy-policy/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://rachel-lasker.vercel.app/terms-of-use/</loc>
+    <loc>https://www.lasker-insurances.com/terms-of-use/</loc>
     <lastmod>2026-10-29</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

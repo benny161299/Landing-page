@@ -25,5 +25,18 @@
         }
       ]
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "rachel-lasker\\.vercel\\.app"
+        }
+      ],
+      "destination": "https://www.lasker-insurances.com/:path*",
+      "permanent": true
+    }
   ]
 }

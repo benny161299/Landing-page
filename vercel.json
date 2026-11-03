@@ -28,11 +28,16 @@
   ],
   "redirects": [
     {
+      "source": "/__r1",
+      "destination": "/about/",
+      "statusCode": 302
+    },
+    {
       "source": "/:path*",
       "has": [
         {
           "type": "host",
-          "value": "rachel-lasker\\.vercel\\.app"
+          "value": "rachel-lasker.vercel.app"
         }
       ],
       "destination": "https://www.lasker-insurances.com/:path*",

@@ -28,11 +28,6 @@
   ],
   "redirects": [
     {
-      "source": "/__r1",
-      "destination": "/about/",
-      "statusCode": 302
-    },
-    {
       "source": "/:path*",
       "has": [
         {

@@ -89,10 +89,15 @@
     ];
   }
 
+  // מזהה ייחודי לכל ניסיון הגשה - מאפשר לשרת למנוע רישום/שליחה כפולים של אותה הגשה.
+  // נשמר על פני ניסיונות חוזרים אחרי כשל, ומתחדש אחרי הצלחה (הגשה חדשה = מזהה חדש).
+  const newRequestId_ = () => (crypto.randomUUID ? crypto.randomUUID() : 'rid-' + Date.now() + '-' + Math.random().toString(36).slice(2));
+
   $$('form.lead').forEach((form) => {
     const status = $('.status', form);
     const btn = $('button[type="submit"]', form);
     if (btn) saveBtnContent(btn);
+    let requestId = newRequestId_();
 
     form.addEventListener('submit', (e) => {
       const el_ = form.elements;
@@ -139,6 +144,7 @@
       const payload = JSON.stringify({
         fullname: name,
         phone: phone,
+        request_id: requestId,
         topic: (topicEl2 && topicEl2.value) ? topicEl2.value : '',
         _honey: (form.elements._honey && form.elements._honey.value) || ''
       });
@@ -163,6 +169,7 @@
       })
       .then((data) => {
         if (data && data.ok === true) {
+          requestId = newRequestId_();
           try {
             sessionStorage.setItem('form_submitted', '1');
           } catch (storageErr) {}

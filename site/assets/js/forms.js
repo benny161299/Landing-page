@@ -71,7 +71,7 @@
   // בניית הודעת מצב-ביניים + כפתור הוואטסאפ במנגנון DOM בטוח (ה-URL מכיל קלט משתמש מקודד).
   // לא מכריזים על כשל: אחרי timeout ייתכן שהשרת עדיין מעבד את הפנייה או כבר קלט אותה,
   // ואין הבטחה לחזרה אל הלקוח אם הרישום לא הצליח - לכן מוצעת גם חלופת הוואטסאפ.
-  function buildWaFallback(waUrl) {
+  function buildWaFallback(waUrl, failed) {
     const link = el('a', {
       class: 'btn btn-brass btn-wa-fallback',
       href: waUrl,
@@ -84,7 +84,12 @@
       ]),
       el('span', { text: 'שליחה בוואטסאפ' })
     ]);
-    return [
+    return failed ? [
+      // כשל ודאי מהשרת (קלט לא תקין / שגיאת הרשאה) - לא מציגים כ"מתעכבת"
+      el('span', { class: 'status-err-text', text: 'שליחת הטופס נכשלה.' }),
+      doc.createTextNode(' ניתן לנסות שוב, או לשלוח את הפרטים בוואטסאפ: '),
+      link
+    ] : [
       el('span', { class: 'status-err-text', text: 'השליחה מתעכבת.' }),
       doc.createTextNode(' ייתכן שהפנייה התקבלה, ובמקרה כזה נחזור אלייך. אם לא, ניתן לנסות שוב בעוד מספר דקות או לשלוח את הפרטים בוואטסאפ: '),
       link
@@ -206,7 +211,7 @@
         window.location.href = '/thank-you/';
       };
 
-      const onGiveUp = () => {
+      const onGiveUp = (failed) => {
         form.classList.remove('is-submitting');
         if (btn) {
           btn.disabled = false;
@@ -225,7 +230,7 @@
           (topicVal ? '\nנושא: ' + topicVal : '') +
           '\nאשמח שתחזרי אליי.';
         const waUrl = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(waMsg);
-        status.replaceChildren(...buildWaFallback(waUrl));
+        status.replaceChildren(...buildWaFallback(waUrl, failed));
         status.className = 'status err has-wa-fallback';
       };
 
@@ -245,7 +250,7 @@
             setTimeout(trySend, RETRY_DELAY_MS);
             return;
           }
-          onGiveUp();
+          onGiveUp(fatal);
         });
       };
       trySend();

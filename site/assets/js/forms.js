@@ -1,4 +1,4 @@
-/* forms.js — טפסי ליד (form.lead): ולידציה, שליחת AJAX ל-FormSubmit,
+/* forms.js — טפסי ליד (form.lead): ולידציה, שליחת AJAX ל-/api/lead,
    ניתוב מחדש לעמוד תודה, ו-fallback לוואטסאפ. נטען רק בעמודים עם טופס. */
 (function () {
   'use strict';
@@ -133,27 +133,26 @@
       status.textContent = 'הפנייה נשלחת, רק רגע...';
       status.className = 'status is-loading';
 
-      const actionAttr = form.getAttribute('action') || '';
-      let submitEndpoint = 'https://formsubmit.co/rl0548479120@gmail.com';
-      if (actionAttr && actionAttr.indexOf('formsubmit.co') !== -1) {
-        submitEndpoint = actionAttr;
-      }
-      const ajaxUrl = submitEndpoint.replace('https://formsubmit.co/', 'https://formsubmit.co/ajax/');
-      const formData = new FormData(form);
-      if (!formData.has('_subject')) formData.append('_subject', 'פנייה חדשה מהאתר – רחל לסקר');
-      if (!formData.has('_template')) formData.append('_template', 'table');
-      if (!formData.has('_captcha')) formData.append('_captcha', 'false');
-      if (!formData.has('_next')) formData.append('_next', window.location.origin + '/thank-you/');
+      // שליחה לנקודת הקצה שלנו (/api/lead - פרוקסי ב-Vercel ל-Google Apps Script).
+      // הטוקן מתווסף בצד שרת בלבד; כאן נשלחים רק שדות הטופס.
+      const topicEl2 = form.elements.topic || form.elements.subject || null;
+      const payload = JSON.stringify({
+        fullname: name,
+        phone: phone,
+        topic: (topicEl2 && topicEl2.value) ? topicEl2.value : '',
+        _honey: (form.elements._honey && form.elements._honey.value) || ''
+      });
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => { controller.abort(); }, 10000);
 
-      fetch(ajaxUrl, {
+      fetch('/api/lead', {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: formData,
+        body: payload,
         signal: controller.signal
       })
       .then((res) => {
@@ -163,7 +162,7 @@
         return res.json();
       })
       .then((data) => {
-        if (data.success === 'true' || data.success === true) {
+        if (data && data.ok === true) {
           try {
             sessionStorage.setItem('form_submitted', '1');
           } catch (storageErr) {}

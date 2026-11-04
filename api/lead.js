@@ -20,8 +20,10 @@ export default async function handler(req, res) {
   });
 
   try {
+    // מסגרת הזמן חייבת לכסות ריצת Apps Script איטית (נמדדה ריצה של ~5 דקות בעומס גוגל).
+    // 55 שניות + maxDuration 60 ב-vercel.json; מעבר לכך הלקוח מנסה שוב עם אותו request_id.
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 9000);
+    const timer = setTimeout(() => controller.abort(), 55000);
 
     // Apps Script answers /exec with a 302 to script.googleusercontent.com.
     // Follow the 302 manually (see postFollowingRedirects).
@@ -30,8 +32,15 @@ export default async function handler(req, res) {
 
     const data = await r.json().catch(() => null);
     if (r.ok && data && data.ok === true) return res.status(200).json({ ok: true });
+    // סטטוסים מובחנים כדי שהלקוח ידע אם ניסיון חוזר עם אותו request_id יכול להתכנס להצלחה:
+    // busy/timeout/502 - זמני, יש לנסות שוב; unauthorized/invalid_input - קבוע.
+    if (data && data.ok === false && data.error === 'busy') return res.status(409).json({ ok: false, reason: 'busy' });
+    if (data && data.ok === false && data.error === 'unauthorized') return res.status(401).json({ ok: false, reason: 'unauthorized' });
+    if (data && data.ok === false && data.error === 'invalid_input') return res.status(400).json({ ok: false, reason: 'invalid_input' });
     return res.status(502).json({ ok: false });
   } catch (e) {
+    // timeout (abort) או כשל רשת מול Apps Script: תוצאה לא ידועה - הריצה בגוגל עשויה להימשך ולהשלים.
+    if (e && e.name === 'AbortError') return res.status(504).json({ ok: false, reason: 'timeout' });
     return res.status(502).json({ ok: false });
   }
 }

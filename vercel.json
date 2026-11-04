@@ -38,5 +38,10 @@
       "destination": "https://www.lasker-insurances.com/:path*",
       "permanent": true
     }
-  ]
+  ],
+  "functions": {
+    "api/lead.js": {
+      "maxDuration": 60
+    }
+  }
 }

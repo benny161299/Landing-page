@@ -15,7 +15,8 @@ export default async function handler(req, res) {
     name: String(body.fullname || '').slice(0, 120),
     phone: String(body.phone || '').slice(0, 30),
     topic: String(body.topic || '').slice(0, 120),
-    website: String(body._honey || '') // honeypot mirror - Apps Script re-checks
+    website: String(body._honey || ''), // honeypot mirror - Apps Script re-checks
+    request_id: String(body.request_id || '').slice(0, 64) // idempotency key per submission attempt
   });
 
   try {

@@ -246,7 +246,6 @@
       </div>
     </div>
     <form class="card lead" id="home-form"
-          action="https://formsubmit.co/rl0548479120@gmail.com"
           method="POST"
           novalidate
           style="color:var(--ink)"
@@ -263,14 +262,10 @@
       <span class="consent-sub">ידוע לי כי לא חלה עליי חובה חוקית למסור פרטים אלו, אך ללא מסירתם לא ניתן יהיה לטפל בפנייתי וליצור איתי קשר.</span>
     </span></label>
   <p class="err cerr" id="home-c-e" style="margin:-14px 0 16px"></p>
-  <button class="btn btn-primary" type="submit">השאירו פרטים</button>
+  <button class="btn btn-primary" type="submit" disabled>השאירו פרטים</button>
   <p class="status" role="status" aria-live="polite"></p>
-  <!-- FormSubmit configuration -->
-  <input type="hidden" name="_subject" value="פנייה חדשה מהאתר – רחל לסקר">
-  <input type="hidden" name="_next" value="https://www.lasker-insurances.com/thank-you/">
-  <input type="hidden" name="_template" value="table">
+  <!-- שדה דמה נגד בוטים (honeypot); נשלח ל-/api/lead -->
   <input type="text" name="_honey" style="display:none" tabindex="-1" aria-hidden="true">
-  <input type="hidden" name="_captcha" value="false">
 </form>
   </div>
 </section>

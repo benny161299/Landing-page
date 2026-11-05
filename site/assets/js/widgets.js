@@ -117,7 +117,7 @@
       formBtn.addEventListener('click', (e) => {
         e.preventDefault();
         toggleMenu(false);
-        const form = doc.getElementById('contact') || doc.querySelector('form.card.lead') || doc.querySelector('form.lead') || doc.querySelector('form[action*="formsubmit"]');
+        const form = doc.getElementById('contact') || doc.querySelector('form.card.lead') || doc.querySelector('form.lead');
         if (form) {
           form.scrollIntoView({ behavior: 'smooth', block: 'start' });
           setTimeout(() => {

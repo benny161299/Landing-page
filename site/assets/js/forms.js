@@ -103,7 +103,11 @@
   $$('form.lead').forEach((form) => {
     const status = $('.status', form);
     const btn = $('button[type="submit"]', form);
-    if (btn) saveBtnContent(btn);
+    // הכפתור מגיע disabled מה-HTML: בלי JavaScript הטופס אינו נשלח כלל (fail-closed).
+    if (btn) {
+      saveBtnContent(btn);
+      btn.disabled = false;
+    }
     let requestId = newRequestId_();
 
     form.addEventListener('submit', (e) => {
@@ -128,11 +132,6 @@
         first.focus();
         return;
       }
-      // הגדרת יעד עמוד תודה מדויק
-      if (form.elements._next) {
-        form.elements._next.value = window.location.origin + '/thank-you/';
-      }
-
       // שליחה חלקה ברקע (AJAX) ללא מעבר לאתר חיצוני
       e.preventDefault();
       form.classList.add('is-submitting');

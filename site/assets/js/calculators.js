@@ -17,6 +17,7 @@
   }
   // בניית הגרף במנגנון DOM בטוח (createElementNS) — חלופה ל-svg.innerHTML
   function chart(svg, series) {
+    if (!svg) return; // כלים ללא גרף (הערכות צורך) מדלגים
     const W = 640, H = 300, pl = 92, pr = 16, pt = 14, pb = 36;
     const n = series[0].v.length - 1;
     let max = 0;
@@ -92,6 +93,13 @@
     return { final: b, put, s, d };
   }
   const C1 = 'var(--c1)', C2 = 'var(--c2)';
+  /* תקרות שנת מס 2026 (מקור: לוח העזר של רשות המסים). מתעדכן מדי שנה. */
+  const SF_SAL_CAP = 15712; // תקרת שכר חודשי להטבת קרן השתלמות לשכיר
+  const SF_SELF_CAP = 20566; // תקרת הפקדה מוטבת שנתית לעצמאי (פטור על הרווחים)
+  const GEMEL_CAP = 83641; // תקרת הפקדה שנתית לקופת גמל להשקעה, לכל הקופות יחד
+  const Q_CAP = 9430; // תקרת קצבה מזכה חודשית
+  const Q_BASKET = 976005; // סל הפטור המלא בקיבוע זכויות: 180 קצבאות מזעריות (5,306 ₪) כפול 57.5% כפול התקרה
+  const Q_PCT = { '2026': 57.5, '2027': 62.5, '2028': 67 }; // שיעור הפטור לקצבה מזכה לפי שנה
   const CALC = {
     fees(o, v) {
       const p = { bal: v.bal, dep: v.dep, years: v.years, y: v.y };
@@ -132,6 +140,97 @@
       o.text('verdict', t);
       chart(o.svg, [{ v: cur.s, color: C2, dash: true }, { v: alt.s, color: C1, fill: true }]);
       return 'צבירה צפויה: ' + ils(cap) + '. קצבה חודשית צפויה: ' + ils(pension) + '. יעד: ' + ils(target) + '. ' + t;
+    },
+    pension(o, v) {
+      if (v.retire <= v.age) { return ''; }
+      const yrs = v.retire - v.age, n = yrs * 12, i = Math.pow(1 + v.y / 100, 1 / 12) - 1;
+      const ann = i > 0 ? (Math.pow(1 + i, n) - 1) / i : n;
+      const cap = v.bal * Math.pow(1 + i, n) + v.dep * ann;
+      const put = v.bal + v.dep * n;
+      const pension = cap / v.coef;
+      o.num('cap', cap, ils); o.num('pension', pension, ils);
+      o.num('put', put, ils); o.num('gain', cap - put, ils);
+      const t = 'בהנחות שהוזנו, בגיל ' + nf.format(v.retire) + ' הצבירה הצפויה היא כ־' + ils(cap) +
+        ', שמתרגמת לקצבה של כ־' + ils(pension) + ' בחודש לפי מקדם ' + nf.format(v.coef) +
+        '. המקדם בפועל נקבע רק בפרישה, לפי התקנון והמסלול שייבחרו.';
+      o.text('verdict', t);
+      chart(o.svg, [{ v: simGrow(v.bal, v.dep, v.y, yrs).s, color: C1, fill: true }]);
+      return 'צבירה צפויה: ' + ils(cap) + '. קצבה חודשית משוערת: ' + ils(pension) + '. סך ההפקדות: ' + ils(put) + '. ' + t;
+    },
+    studyfund(o, v) {
+      const capM = v.emp === 'self' ? SF_SELF_CAP / 12 : Math.min(v.salary, SF_SAL_CAP) * 0.10;
+      const depEx = Math.min(v.dep, capM), depRest = Math.max(0, v.dep - capM);
+      const gEx = simGrow(0, depEx, v.y, v.years), gRest = simGrow(0, depRest, v.y, v.years);
+      const final = gEx.final + gRest.final, put = gEx.put + gRest.put;
+      // הערכת החיסכון: עד 25% על הרווח הריאלי; כאן התשואה שהוזנה מטופלת כאילו הייתה הרווח החייב כולו (קירוב נומינלי)
+      const gainEx = gEx.final - gEx.put, taxSaved = gainEx * 0.25;
+      o.num('final', final, ils); o.num('exempt', gEx.final, ils);
+      o.num('put', put, ils); o.num('saved', taxSaved, ils);
+      const capTxt = v.emp === 'self' ?
+        'תקרת ההפקדה המוטבת לעצמאים ב־2026 היא ' + ils(SF_SELF_CAP) + ' בשנה.' :
+        'תקרת השכר המוטב לשכירים ב־2026 היא ' + ils(SF_SAL_CAP) + ' בחודש, וההפקדה המוטבת המלאה היא 10% ממנה.';
+      const t = depRest > 0 ?
+        'חלק מההפקדה (' + ils(depRest) + ' בחודש) מעל התקרה המוטבת, והרווחים עליו יחויבו במס רווחי הון במשיכה. ' + capTxt :
+        'כל ההפקדה בתוך התקרה המוטבת, ולכן הרווחים עשויים להיות פטורים ממס רווחי הון במשיכה כדין. ' + capTxt;
+      const realNote = ' החיסכון המוצג הוא השוואה נומינלית בלבד: הוא מניח שהתשואה שהוזנה חייבת כולה במס של 25% ללא הצמדה למדד, ואילו בפועל המס חל על הרווח הריאלי בלבד - ולכן החיסכון בפועל עשוי להיות נמוך מהמוצג.';
+      o.text('verdict', t + realNote);
+      chart(o.svg, [
+        { v: gEx.s.map((x, k) => x + gRest.s[k]), color: C1, fill: true },
+        { v: gEx.s, color: C2, dash: true }
+      ]);
+      return 'צבירה צפויה: ' + ils(final) + '. מתוכה בחלק הפטור: ' + ils(gEx.final) + '. חיסכון מס משוער: ' + ils(taxSaved) + '. ' + t + realNote;
+    },
+    lifeneed(o, v) {
+      const incomePart = v.income * 12 * v.years;
+      const debtPart = v.mortgage + v.debts;
+      const need = Math.max(0, incomePart + debtPart - v.existing);
+      o.num('need', need, ils); o.num('incomePart', incomePart, ils);
+      o.num('debtPart', debtPart, ils); o.num('existing', v.existing, ils);
+      const t = need > 0 ?
+        'לפי הנתונים שהוזנו, פער הכיסוי המשוער הוא כ־' + ils(need) + '. הכיסוי הנדרש בפועל תלוי גם בהוצאות מיוחדות ובכיסויים קיימים דרך העבודה והפנסיה.' :
+        'לפי הנתונים שהוזנו, הכיסויים והחסכונות הקיימים מכסים את הצורך המשוער. כדאי לבדוק מדי כמה שנים שהכיסוי עדיין מתאים.';
+      o.text('verdict', t);
+      return 'כיסוי מומלץ: ' + ils(need) + '. החלפת הכנסה: ' + ils(incomePart) + '. משכנתא וחובות: ' + ils(debtPart) + '. קיים: ' + ils(v.existing) + '. ' + t;
+    },
+    gemel(o, v) {
+      const maxM = GEMEL_CAP / 12;
+      const dep = Math.min(v.dep, maxM), clamped = v.dep > maxM;
+      const g = simGrow(v.init, dep, v.y, v.years);
+      o.num('final', g.final, ils); o.num('put', g.put, ils); o.num('gain', g.final - g.put, ils);
+      const t = (clamped ?
+        'ההפקדה שהוזנה גבוהה מהתקרה, ולכן החישוב נעשה לפי תקרת ' + ils(GEMEL_CAP) + ' בשנה לכל תעודת זהות, בכל הקופות יחד. ' : '') +
+        'במשיכה כסכום חד פעמי חל בדרך כלל מס רווחי הון בשיעור של עד 25% על הרווח הריאלי; קבלת הכסף כקצבה מגיל 60 עשויה להקנות פטור מלא מהמס על הרווחים.';
+      o.text('verdict', t);
+      chart(o.svg, [{ v: g.s, color: C1, fill: true }, { v: g.d, color: C2, dash: true }]);
+      return 'צבירה צפויה: ' + ils(g.final) + '. הפקדות: ' + ils(g.put) + '. רווח: ' + ils(g.final - g.put) + '. ' + t;
+    },
+    disability(o, v) {
+      const needed = v.salary * v.pct / 100;
+      const gap = Math.max(0, needed - v.existing);
+      o.num('needed', needed, ils); o.num('existing', v.existing, ils);
+      o.num('gap', gap, ils); o.num('total', gap * 12 * v.years, ils);
+      o.cls('gap', gap > 0 ? 'neg' : 'pos');
+      const t = gap > 0 ?
+        'פער הכיסוי החודשי הוא כ־' + ils(gap) + ', ובצבירה של ' + nf.format(v.years) + ' שנים עד הפרישה כ־' + ils(gap * 12 * v.years) + '. גובה הקצבה בפועל תלוי בהגדרת הנכות בפוליסה ובתקופת ההמתנה.' :
+        'לפי הנתונים שהוזנו, הכיסוי הקיים עומד ביעד שהוגדר. כדאי לבדוק את הגדרת הנכות בפוליסה ואת תקופת ההמתנה.';
+      o.text('verdict', t);
+      return 'קצבה נדרשת: ' + ils(needed) + '. קיימת: ' + ils(v.existing) + '. פער: ' + ils(gap) + '. ' + t;
+    },
+    retiretax(o, v) {
+      const pct = Q_PCT[v.year] || Q_PCT['2026'];
+      // קצבה מוכרת פטורה במלואה ויוצאת מהבסיס לפני החלת הפטור על הקצבה המזכה
+      const recog = Math.min(Math.max(0, v.recog), v.pension);
+      const mz = v.pension - recog;
+      // הפטור אחיד: סכום קבוע = שיעור הפטור כפול התקרה, עד לגובה הקצבה (תיקון 190)
+      const exempt = Math.min(mz, Q_CAP * pct / 100);
+      const taxable = Math.max(0, mz - exempt);
+      o.num('exempt', exempt, ils); o.num('taxable', taxable, ils);
+      o.num('recog', recog, ils); o.num('free', exempt + recog, ils);
+      o.num('basket', Q_BASKET, ils);
+      // הכלי הוא המחשה היפותטית למי שכבר זכאי; הוא אינו קובע זכאות או גיל זכאה
+      const t = 'בשנת ' + v.year + ' הפטור המרבי הוא ' + nf1.format(pct) + '% מתקרת קצבה מזכה (' + ils(Q_CAP) + '), כלומר עד ' + ils(Q_CAP * pct / 100) + ' בחודש, בהנחה שכל סל הפטור (' + ils(Q_BASKET) + ') זמין. החישוב מניח זכאות מלאה: הגעה לגיל הפרישה הקבוע בחוק (המשתנה לפי מין ותאריך לידה) וקבלת קצבה מזכה. הפטור בפועל נקבע בקיבוע זכויות, וקטן אם נמשכו בעבר מענקים פטורים או בוצע היוון קצבה. המס בפועל על החלק החייב תלוי במדרגות המס, בנקודות הזיכוי ובהכנסות נוספות.';
+      o.text('verdict', t);
+      return 'פטור חודשי משוער: ' + ils(exempt) + '. חייב במס: ' + ils(taxable) + '. קצבה מוכרת פטורה: ' + ils(v.recog) + '. ' + t;
     }
   };
 
@@ -237,8 +336,16 @@
       }
     }
 
+    // שדות בחירה (select) — למשל מעמד שכיר/עצמאי. לא עוברים אימות מספרי.
+    $$('select[data-k]', root).forEach((s) => {
+      els[s.getAttribute('data-k')] = { select: s };
+      s.addEventListener('change', run);
+      s.addEventListener('input', run);
+    });
+
     $$('.f', root).forEach((f) => {
       const n = $('input[type=number]', f), r = $('input[type=range]', f);
+      if (!n) return; // שדה ללא input מספרי (למשל select בלבד)
       els[n.getAttribute('data-k')] = { f, n, r, err: $('.err', f) };
       n.addEventListener('input', () => {
         if (r && n.value !== '' && !isNaN(parseFloat(n.value))) {
@@ -256,7 +363,9 @@
       const v = {};
       let hasErr = false, firstErr = '';
       Object.keys(els).forEach((k) => {
-        const e = els[k], n = e.n;
+        const e = els[k];
+        if (e.select) { v[k] = e.select.value; return; }
+        const n = e.n;
         const valStr = String(n.value).trim().replace(',', '.');
         const x = parseFloat(valStr), mn = +n.min, mx = +n.max;
         let bad = false;
@@ -278,8 +387,8 @@
         v[k] = isNaN(x) ? parseFloat(n.defaultValue) : x;
       });
 
-      // Cross-field validation for retirement calculator (self)
-      if (type === 'self' && els['age'] && els['retire']) {
+      // Cross-field validation for retirement calculators (self, pension)
+      if ((type === 'self' || type === 'pension') && els['age'] && els['retire']) {
         const ageInput = els['age'], retireInput = els['retire'];
         const ageRaw = String(ageInput.n.value).trim().replace(',', '.');
         const retireRaw = String(retireInput.n.value).trim().replace(',', '.');

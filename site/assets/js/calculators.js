@@ -57,6 +57,37 @@
     svg.setAttribute('style', 'direction:ltr');
   }
 
+  // תרשים עמודות להמחשת ערכים שהוזנו (ללא ציר זמן), באותו מבנה חזותי של שאר הגרפים: רשת, ציר ערכים, צבעי הכלים
+  function columns(svg, cols) {
+    if (!svg) return;
+    const W = 640, H = 300, pl = 92, pr = 16, pt = 26, pb = 36;
+    let max = 0;
+    cols.forEach((c) => { if (c.v > max) max = c.v; });
+    max = niceMax(max);
+    const Y = (v) => pt + (H - pt - pb) * (1 - v / max);
+    const slot = (W - pl - pr) / cols.length, bw = Math.min(84, slot * 0.5);
+    svg.replaceChildren();
+    for (let g = 0; g <= 4; g++) {
+      const gv = max * g / 4, gy = Y(gv);
+      svg.appendChild(svgEl('line', { class: 'grid', x1: pl, x2: W - pr, y1: gy, y2: gy }));
+      svg.appendChild(svgEl('text', { x: pl - 8, y: gy + 4, 'text-anchor': 'end', text: gv >= 1e6 ? nf1.format(gv / 1e6) + ' מיליון' : gv >= 1e3 ? nf1.format(gv / 1e3) + ' אלף' : nf.format(gv) }));
+    }
+    cols.forEach((c, i) => {
+      const cx = pl + slot * (i + 0.5), x0 = cx - bw / 2, top = Y(c.v), h = Math.max(0, Y(0) - top);
+      if (h > 0) {
+        svg.appendChild(svgEl('rect', { x: x0.toFixed(1), y: top.toFixed(1), width: bw.toFixed(1), height: h.toFixed(1), fill: c.color, opacity: '.14' }));
+        const edge = { d: 'M' + x0.toFixed(1) + ' ' + Y(0).toFixed(1) + 'L' + x0.toFixed(1) + ' ' + top.toFixed(1) + 'L' + (x0 + bw).toFixed(1) + ' ' + top.toFixed(1) + 'L' + (x0 + bw).toFixed(1) + ' ' + Y(0).toFixed(1),
+          fill: 'none', stroke: c.color, 'stroke-width': '3', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' };
+        if (c.dash) edge['stroke-dasharray'] = '7 6';
+        svg.appendChild(svgEl('path', edge));
+      }
+      svg.appendChild(svgEl('text', { x: cx, y: top - 8, 'text-anchor': 'middle', text: c.valueText || ils(c.v) }));
+      svg.appendChild(svgEl('text', { x: cx, y: H - 12, 'text-anchor': 'middle', text: c.label }));
+    });
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('style', 'direction:ltr');
+  }
+
   /* ---------- Calculators ---------- */
   function setNum(node, val, fmt) {
     if (!node) return;
@@ -190,6 +221,12 @@
         'לפי הנתונים שהוזנו, פער הכיסוי המשוער הוא כ־' + ils(need) + '. הכיסוי הנדרש בפועל תלוי גם בהוצאות מיוחדות ובכיסויים קיימים דרך העבודה והפנסיה.' :
         'לפי הנתונים שהוזנו, הכיסויים והחסכונות הקיימים מכסים את הצורך המשוער. כדאי לבדוק מדי כמה שנים שהכיסוי עדיין מתאים.';
       o.text('verdict', t);
+      columns(o.svg, [
+        { label: 'החלפת הכנסה', v: incomePart, color: C1 },
+        { label: 'משכנתא וחובות', v: debtPart, color: C1 },
+        { label: 'כיסויים קיימים', v: v.existing, color: C2, dash: true },
+        { label: 'פער כיסוי', v: need, color: C1, valueText: need > 0 ? ils(need) : 'אין פער' }
+      ]);
       return 'כיסוי מומלץ: ' + ils(need) + '. החלפת הכנסה: ' + ils(incomePart) + '. משכנתא וחובות: ' + ils(debtPart) + '. קיים: ' + ils(v.existing) + '. ' + t;
     },
     gemel(o, v) {
@@ -214,6 +251,11 @@
         'פער הכיסוי החודשי הוא כ־' + ils(gap) + ', ובצבירה של ' + nf.format(v.years) + ' שנים עד הפרישה כ־' + ils(gap * 12 * v.years) + '. גובה הקצבה בפועל תלוי בהגדרת הנכות בפוליסה ובתקופת ההמתנה.' :
         'לפי הנתונים שהוזנו, הכיסוי הקיים עומד ביעד שהוגדר. כדאי לבדוק את הגדרת הנכות בפוליסה ואת תקופת ההמתנה.';
       o.text('verdict', t);
+      columns(o.svg, [
+        { label: 'קצבה נדרשת', v: needed, color: C1 },
+        { label: 'כיסוי קיים', v: v.existing, color: C2, dash: true },
+        { label: 'פער חודשי', v: gap, color: C1, valueText: gap > 0 ? ils(gap) : 'אין פער' }
+      ]);
       return 'קצבה נדרשת: ' + ils(needed) + '. קיימת: ' + ils(v.existing) + '. פער: ' + ils(gap) + '. ' + t;
     },
     retiretax(o, v) {
@@ -230,6 +272,11 @@
       // הכלי הוא המחשה היפותטית למי שכבר זכאי; הוא אינו קובע זכאות או גיל זכאה
       const t = 'בשנת ' + v.year + ' הפטור המרבי הוא ' + nf1.format(pct) + '% מתקרת קצבה מזכה (' + ils(Q_CAP) + '), כלומר עד ' + ils(Q_CAP * pct / 100) + ' בחודש, בהנחה שכל סל הפטור (' + ils(Q_BASKET) + ') זמין. החישוב מניח זכאות מלאה: הגעה לגיל הפרישה הקבוע בחוק (המשתנה לפי מין ותאריך לידה) וקבלת קצבה מזכה. הפטור בפועל נקבע בקיבוע זכויות, וקטן אם נמשכו בעבר מענקים פטורים או בוצע היוון קצבה. המס בפועל על החלק החייב תלוי במדרגות המס, בנקודות הזיכוי ובהכנסות נוספות.';
       o.text('verdict', t);
+      columns(o.svg, [
+        { label: 'הקצבה שהוזנה', v: v.pension, color: C1 },
+        { label: 'פטורה ממס', v: recog + exempt, color: C2, dash: true },
+        { label: 'חייבת במס', v: taxable, color: C1 }
+      ]);
       return 'פטור חודשי משוער: ' + ils(exempt) + '. חייב במס: ' + ils(taxable) + '. קצבה מוכרת פטורה: ' + ils(v.recog) + '. ' + t;
     }
   };

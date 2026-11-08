@@ -487,3 +487,15 @@
     run();
   });
 })();
+
+/* כפתורי הסבר "?" בשדות: פתיחה/סגירה בלחיצה, Enter/רווח, ו-Esc לסגירה */
+(function () {
+  'use strict';
+  document.querySelectorAll('.qh[aria-controls]').forEach((b) => {
+    const box = document.getElementById(b.getAttribute('aria-controls'));
+    if (!box) return;
+    const set = (open) => { b.setAttribute('aria-expanded', open ? 'true' : 'false'); box.hidden = !open; };
+    b.addEventListener('click', () => set(box.hidden));
+    b.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !box.hidden) { set(false); } });
+  });
+})();

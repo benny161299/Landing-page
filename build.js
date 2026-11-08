@@ -46,6 +46,10 @@ const CURRENT = {
   'blog/investment-gemel-tax-cap': ['/blog/', 'true'],
   'blog/self-employed-pension-questions': ['/blog/', 'true'],
   'blog/what-is-pension-clearinghouse': ['/blog/', 'true'],
+  'blog/long-term-care-insurance': ['/blog/', 'true'],
+  'blog/default-pension-fund': ['/blog/', 'true'],
+  'blog/critical-illness-vs-health-insurance': ['/blog/', 'true'],
+  'blog/pension-in-divorce': ['/blog/', 'true'],
 };
 
 function pageId(rel) {

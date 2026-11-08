@@ -1430,3 +1430,12 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
   .phead-grid { grid-template-columns: 1fr; gap: 16px; }
   .phead-fig img { height: 120px; aspect-ratio: auto; }
 }
+
+/* כפתור הסבר "?" ליד שדות במחשבונים */
+.f .lbl { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.f .lbl label { margin-bottom: 0; }
+.qh { flex: none; width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 1.5px solid var(--field-line); background: var(--bg); color: var(--muted); font: 600 .85rem/1 var(--sans); cursor: pointer; position: relative; }
+.qh::after { content: ""; position: absolute; inset: -10px; }
+.qh:hover, .qh[aria-expanded="true"] { color: var(--ink); border-color: var(--ink); }
+.qh:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.f .hint.help { margin: 6px 0 0; padding: 8px 12px; background: var(--bg); border-inline-start: 3px solid var(--c2); border-radius: 6px; }

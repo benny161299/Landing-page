@@ -10,6 +10,17 @@ export default async function handler(req, res) {
   if (!url || !token) return res.status(500).json({ ok: false });
 
   const body = req.body || {};
+
+  // בידוד תצוגות מקדימות (Preview): Vercel מציבה VERCEL_ENV=preview רק בדיפלויים של ברנצ'ים.
+  // שם הטופס עובר בדיקת קלט ומחזיר הצלחה בלי לפנות ל-Apps Script - בלי שורה בגיליון ובלי מייל לרחל,
+  // כדי שאפשר יהיה לבדוק מקצה לקצה (כולל אירוע GA) מבלי לגעת בנתונים החיים. בפרודקשן הזרימה ללא שינוי.
+  if (process.env.VERCEL_ENV === 'preview') {
+    const okName = String(body.fullname || '').trim().length > 0;
+    const okPhone = /^(\+?972|0)\d{8,9}$/.test(String(body.phone || '').replace(/[\s\-().]/g, ''));
+    if (!okName || !okPhone) return res.status(400).json({ ok: false, reason: 'invalid_input' });
+    return res.status(200).json({ ok: true, preview: true });
+  }
+
   const payload = JSON.stringify({
     token: token,
     name: String(body.fullname || '').slice(0, 120),

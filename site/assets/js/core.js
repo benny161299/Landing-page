@@ -57,5 +57,21 @@
     }
   }
 
-  window.RL = { doc, $, $$, reduce, nf, nf1, fmtN, ils, WA, el, svgEl };
+  /* מדידת GA4: track בטוח גם כשהתג לא נטען (חוסם פרסומות / תקלה),
+     ומדידת לחיצות על יצירת קשר בלי לשלוח פרטים אישיים - רק סוג הפעולה. */
+  function track(eventName, params) {
+    try {
+      if (typeof window.gtag === 'function') window.gtag('event', eventName, params || {});
+    } catch (_) {}
+  }
+  doc.addEventListener('click', (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    const href = a.getAttribute('href') || '';
+    if (href.startsWith('https://wa.me/')) track('contact_click', { contact_method: 'whatsapp' });
+    else if (href.startsWith('tel:')) track('contact_click', { contact_method: 'phone' });
+    else if (href.startsWith('mailto:')) track('contact_click', { contact_method: 'email' });
+  }, true);
+
+  window.RL = { doc, $, $$, reduce, nf, nf1, fmtN, ils, WA, el, svgEl, track };
 })();

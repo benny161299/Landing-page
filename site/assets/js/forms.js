@@ -201,6 +201,8 @@
 
       const onSuccess = () => {
         requestId = newRequestId_();
+        // אירוע ליד ב-GA4 ללא תוכן הטופס - רק העמוד שממנו נשלח
+        if (window.RL && typeof RL.track === 'function') RL.track('generate_lead', { page_path: location.pathname });
         try {
           sessionStorage.removeItem('lead_pending');
           sessionStorage.setItem('form_submitted', '1');

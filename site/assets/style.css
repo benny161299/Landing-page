@@ -85,6 +85,14 @@ p { margin: 0; }
 .btn-ghost:hover { background: var(--ink); color: var(--bg); }
 .btn-brass { background: var(--brass-fill); color: var(--on-brass); }
 .btn-brass:hover { filter: brightness(1.08); }
+.btn-ico {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-end: 0.45em;
+  vertical-align: -0.22em;
+  flex-shrink: 0;
+}
 .wa-btn-icon {
   display: inline-block;
   width: 1.15em;

@@ -60,6 +60,7 @@ const CURRENT = {
   'blog/default-pension-fund': ['/blog/', 'true'],
   'blog/critical-illness-vs-health-insurance': ['/blog/', 'true'],
   'blog/pension-in-divorce': ['/blog/', 'true'],
+  'blog/recommended-insurance-agent': ['/blog/', 'true'],
 };
 
 function pageId(rel) {

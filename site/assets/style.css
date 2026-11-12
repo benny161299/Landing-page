@@ -1490,3 +1490,52 @@ html[data-asw-dismissed="true"] #asw-menu-btn {
 @media (max-width: 768px) {
   .marquee-rev .rev-card { width: 280px; }
 }
+
+/* ===== באנר הסכמה לעוגיות ===== */
+#cookie-banner {
+  position: fixed;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  inset-inline: 0;
+  margin-inline: auto;
+  width: min(680px, calc(100% - 24px));
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-inline-start: 4px solid var(--brass-fill);
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(14, 36, 39, .22);
+  font-family: var(--sans);
+  animation: cb-in .35s ease;
+}
+@keyframes cb-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+#cookie-banner .cb-icon { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--band); display: grid; place-items: center; }
+#cookie-banner .cb-text { margin: 0; font-size: 14px; line-height: 1.55; }
+#cookie-banner .cb-text a { color: var(--focus); text-decoration: underline; }
+#cookie-banner .cb-actions { flex: none; display: flex; gap: 8px; margin-inline-start: auto; }
+#cookie-banner .cb-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 999px; padding: 9px 16px; font-family: inherit; font-weight: 600; font-size: 14px; line-height: 1; cursor: pointer; border: 1px solid transparent; }
+#cookie-banner .cb-accept { background: var(--cta); color: var(--on-cta); }
+#cookie-banner .cb-accept:hover { filter: brightness(1.12); }
+#cookie-banner .cb-reject { background: transparent; color: var(--muted); border-color: var(--line); }
+#cookie-banner .cb-reject:hover { background: var(--soft); }
+#cookie-banner .cb-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (max-width: 640px) {
+  #cookie-banner { flex-wrap: wrap; gap: 10px; padding: 12px 14px; width: calc(100% - 20px); bottom: calc(10px + env(safe-area-inset-bottom, 0px)); }
+  #cookie-banner .cb-text { flex: 1 1 calc(100% - 58px); font-size: 13px; }
+  #cookie-banner .cb-actions { width: 100%; }
+  #cookie-banner .cb-btn { flex: 1; }
+  /* פינוי מקום לכפתורים הצפים (נגישות ויצירת קשר) בזמן שהבאנר מוצג */
+  html.has-cookie-banner .asw-menu-btn { bottom: calc(170px + env(safe-area-inset-bottom, 0px)) !important; }
+  html.has-cookie-banner .qc-trigger { bottom: calc(170px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #cookie-banner { animation: none; }
+}
+/* כפתור "הגדרות עוגיות" בפוטר — נראה כמו שאר הקישורים */
+.foot .link-btn { background: none; border: 0; padding: 0; font: inherit; color: #E3ECEA; cursor: pointer; text-align: start; }
+.foot .link-btn:hover { text-decoration: underline; }
+.foot .link-btn:focus-visible { outline: 2px solid #E3ECEA; outline-offset: 2px; }

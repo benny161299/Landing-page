@@ -49,14 +49,20 @@
     clearGACookies();
   }
 
-  /* מחיקת עוגיות המדידה של GA */
+  /* מחיקת עוגיות המדידה של GA. העוגיות נשמרות על הדומיין הראשי
+     (למשל .lasker-insurances.com), לכן מנסים כל סיומת דומיין אפשרית. */
   function clearGACookies() {
     var names = ['_ga'];
     document.cookie.split(';').forEach(function (c) {
       var name = c.split('=')[0].trim();
-      if (name.indexOf('_ga_') === 0) names.push(name);
+      if (name.indexOf('_ga_') === 0 && names.indexOf(name) === -1) names.push(name);
     });
-    var domains = [location.hostname, '.' + location.hostname];
+    var parts = location.hostname.split('.');
+    var domains = [location.hostname];
+    for (var i = 0; i < parts.length - 1; i++) {
+      domains.push(parts.slice(i).join('.'));
+      domains.push('.' + parts.slice(i).join('.'));
+    }
     names.forEach(function (name) {
       domains.forEach(function (domain) {
         document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + domain;

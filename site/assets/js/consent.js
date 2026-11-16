@@ -1,8 +1,8 @@
 /* consent.js — באנר הסכמה לעוגיות וטעינת Google Analytics רק לאחר אישור.
    נטען בראש כל עמוד במקום קוד ה־GA הישיר:
    - ללא בחירה: GA לא נטען כלל ומוצג באנר קטן בתחתית העמוד.
-   - "דוחים": הבחירה נשמרת, GA נשאר כבוי (גם בעמודים אחרים ובביקורים הבאים).
-   - "מאשרים": GA נטען ומתחילה מדידה.
+   - כפתור יחיד "הבנתי": הלחיצה שומרת את הבחירה, GA נטען ומתחילה מדידה.
+   - ללא לחיצה: GA נשאר כבוי. ביטול מדידה אפשרי דרך "הגדרות עוגיות" בפוטר.
    - שינוי דעה מאישור לדחייה: המדידה נעצרת מיד (גם אם GA כבר נטען),
      עוגיות ה־_ga נמחקות, וההשבתה נשמרת לביקורים הבאים.
    הבחירה נשמרת ב־localStorage ותקפה לכל עמודי האתר; ניתן לשנותה דרך "הגדרות עוגיות" בפוטר. */
@@ -88,7 +88,7 @@
   var CHECK_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>';
   var X_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 
-  function showBanner() {
+  function showBanner(withdraw) {
     if (document.getElementById('cookie-banner') || !document.body) return;
     var b = document.createElement('div');
     b.id = 'cookie-banner';
@@ -96,21 +96,21 @@
     b.setAttribute('aria-label', 'הודעה על שימוש בעוגיות');
     b.innerHTML =
       '<div class="cb-icon" aria-hidden="true">' + COOKIE_ICON + '</div>' +
-      '<p class="cb-text">האתר משתמש בעוגיות (<span class="ltr">Cookies</span>) למדידת תנועה באמצעות <span class="ltr">Google Analytics</span>. אפשר לאשר או לדחות. פרטים ב<a href="/privacy-policy/">מדיניות הפרטיות</a>.</p>' +
+      '<p class="cb-text">האתר משתמש בעוגיות (<span class="ltr">Cookies</span>) למדידת תנועה באמצעות <span class="ltr">Google Analytics</span>. המדידה מתחילה בלחיצה על "הבנתי". פרטים ב<a href="/privacy-policy/">מדיניות הפרטיות</a>.</p>' +
       '<div class="cb-actions">' +
-      '<button type="button" class="cb-btn cb-accept">' + CHECK_ICON + '<span>מאשרים</span></button>' +
-      '<button type="button" class="cb-btn cb-reject">' + X_ICON + '<span>דוחים</span></button>' +
+      '<button type="button" class="cb-btn cb-accept">' + CHECK_ICON + '<span>הבנתי</span></button>' +
+      (withdraw ? '<button type="button" class="cb-btn cb-reject">' + X_ICON + '<span>ביטול מדידה</span></button>' : '') +
       '</div>';
     b.querySelector('.cb-accept').addEventListener('click', function () { choose('accepted'); });
-    b.querySelector('.cb-reject').addEventListener('click', function () { choose('rejected'); });
+    var rj = b.querySelector('.cb-reject');
+    if (rj) rj.addEventListener('click', function () { choose('rejected'); });
     document.body.appendChild(b);
     document.documentElement.classList.add('has-cookie-banner');
   }
 
   /* פתיחה מחדש של הבאנר מ"הגדרות עוגיות" בפוטר */
   window.rlCookieSettings = function () {
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
-    showBanner();
+    showBanner(true);
   };
 
   function init() {

@@ -1,7 +1,7 @@
 /* scroll-line.js - קו זהב דק שמלווה את הגלילה בדף הבית.
-   מצויר לפי מיקומי הסקשנים האמיתיים, מתפתל בשוליים הריקים בין החלקים,
-   עוצר בעיגולים קטנים ליד שירותים / צעדים / שאלות, ומסתיים ליד יצירת הקשר.
-   דקורטיבי בלבד: aria-hidden, בלי אירועי עכבר, לא נוגע בתוכן. */
+   מתחיל מהלוגו כשמתחילים לגלול, מתפתל בשוליים הריקים, ומסתיים בסיבוב סביב טופס יצירת הקשר.
+   קל במכוון: הגיאומטריה מחושבת פעם אחת בחישוב מתמטי (בלי מדידות SVG),
+   ובזמן הגלילה מתעדכן רק ערך חיתוך אחד ושוליים של לולאה קטנה. דקורטיבי בלבד (aria-hidden). */
 (function () {
   'use strict';
   var main = document.getElementById('main');
@@ -12,135 +12,184 @@
 
   var css = document.createElement('style');
   css.textContent =
-    '.sl-svg{position:absolute;top:0;left:0;pointer-events:none;z-index:5;overflow:visible}' +
-    '.sl-track{fill:none;stroke:rgba(209,168,98,.28);stroke-width:2;stroke-dasharray:2 7;stroke-linecap:round}' +
-    '.sl-draw{fill:none;stroke:#D1A862;stroke-width:3;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(209,168,98,.5))}' +
-    '.sl-stop{fill:#F2F5F3;stroke:rgba(138,97,39,.55);stroke-width:2}' +
-    '.sl-stop.on{fill:#D1A862;stroke:#8A6127}' +
-    '@media (prefers-reduced-motion:no-preference){.sl-stop{transition:fill .3s,stroke .3s}}' +
-    '@media print,(forced-colors:active){.sl-svg{display:none}}';
+    '.sl-svg,.sl-loop{position:absolute;pointer-events:none;z-index:5;overflow:visible}' +
+    '.sl-svg{top:0;left:0}' +
+    '.sl-line{fill:none;stroke:#D1A862;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}' +
+    '.sl-stop{fill:#D1A862;stroke:#8A6127;stroke-width:2}' +
+    '.marquee{position:relative;z-index:6}' +
+    '@media print,(forced-colors:active){.sl-svg,.sl-loop{display:none}}';
   document.head.appendChild(css);
 
-  var svg = document.createElementNS(NS, 'svg');
-  svg.setAttribute('class', 'sl-svg');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.setAttribute('focusable', 'false');
-  svg.setAttribute('width', '0'); svg.setAttribute('height', '0');
-  var track = document.createElementNS(NS, 'path'); track.setAttribute('class', 'sl-track');
-  var draw = document.createElementNS(NS, 'path'); draw.setAttribute('class', 'sl-draw');
-  svg.appendChild(track); svg.appendChild(draw);
+  function el(name, attrs) {
+    var n = document.createElementNS(NS, name);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+  var svg = el('svg', { 'class': 'sl-svg', 'aria-hidden': 'true', focusable: 'false', width: 0, height: 0 });
+  var mainPath = el('path', { 'class': 'sl-line' });
+  svg.appendChild(mainPath);
+  var loopSvg = el('svg', { 'class': 'sl-loop', 'aria-hidden': 'true', focusable: 'false', width: 0, height: 0 });
+  var loopPath = el('path', { 'class': 'sl-line' });
+  loopSvg.appendChild(loopPath);
   if (getComputedStyle(main).position === 'static') main.style.position = 'relative';
   main.insertBefore(svg, main.firstChild);
+  main.insertBefore(loopSvg, main.firstChild);
 
-  var total = 0, samples = [], stops = [], stopEls = [], lastShown = -1, raf = 0, buildRaf = 0;
+  var built = false, startY = 0, mainH = 0, headMax = 0;
+  var loopTop = 0, loopH = 0, loopLen = 0, loopStartY = 0;
+  var lastClip = -1, lastLoop = -1, raf = 0, buildTimer = 0, lastBuildH = 0, lastBuildW = 0;
 
-  function q(sel) { return main.querySelector(sel); }
-  function qa(sel) { return Array.prototype.slice.call(main.querySelectorAll(sel)); }
-  function top(el, r) { return el.getBoundingClientRect().top - r.top; }
+  function bez(a, b, c, d, t) {
+    var u = 1 - t;
+    return u * u * u * a + 3 * u * u * t * b + 3 * u * t * t * c + t * t * t * d;
+  }
 
   function build() {
-    buildRaf = 0;
+    buildTimer = 0;
     var r = main.getBoundingClientRect();
     var w = main.clientWidth, h = main.scrollHeight;
-    var secs = [q('.hero'), q('#services'), q('#how'), q('#about'), q('section.band:not(#contact)'), q('#home-faq-h') && q('#home-faq-h').closest('section'), q('#contact')]
+    var docTop = r.top + (window.pageYOffset || 0);
+    function T(n) { return n.getBoundingClientRect().top - r.top; }
+    var q = function (s) { return main.querySelector(s); };
+    var faqH = q('#home-faq-h');
+    var secs = [q('.hero'), q('#services'), q('#how'), q('#about'), q('section.band:not(#contact)'), faqH && faqH.closest('section'), q('#contact')]
       .filter(function (s, i, a) { return s && a.indexOf(s) === i; });
-    if (secs.length < 3 || w < 320) { svg.style.display = 'none'; return; }
-    svg.style.display = '';
+    var form = q('#home-form');
+    var logo = document.querySelector('header .brand img') || document.querySelector('header .brand');
+    if (secs.length < 3 || w < 320 || !form || !logo) { svg.style.display = loopSvg.style.display = 'none'; built = true; return; }
+    svg.style.display = loopSvg.style.display = '';
+
+    /* קריאות DOM בלבד, בבת אחת */
     var wrap = q('.wrap');
     var pad = wrap ? Math.max(0, wrap.getBoundingClientRect().left + parseFloat(getComputedStyle(wrap).paddingLeft) - r.left) : 20;
-    var gut = Math.max(8, Math.min(44, pad * 0.5));
-    var R = w - gut, L = gut, side = R;
-    var pts = [{ x: side, y: top(secs[0], r) + 70 }], marks = [];
-    secs.forEach(function (s, i) {
-      var y0 = top(s, r);
+    var gut = Math.max(7, Math.min(44, pad * 0.5));
+    var R = w - gut, L = gut;
+    var lr = logo.getBoundingClientRect(), hdr = logo.closest('header');
+    var logoX = lr.left - r.left + lr.width / 2;
+    var logoY = hdr ? hdr.offsetTop + hdr.offsetHeight - main.offsetTop : 70;
+    var secInfo = secs.map(function (s) {
+      var cs = getComputedStyle(s), ps = s.previousElementSibling ? getComputedStyle(s.previousElementSibling) : null;
+      var prev = s.previousElementSibling;
+      return {
+        top: T(s), padTop: parseFloat(cs.paddingTop),
+        prevContentBottom: prev ? T(prev) + prev.offsetHeight - parseFloat(ps.paddingBottom) : 0,
+        faq: !!s.querySelector('.faq'), id: s.id,
+        stops: [].slice.call(s.querySelectorAll(s.id === 'services' ? '.svc-group' : s.id === 'how' ? '.steps li' : (s.querySelector('.faq') ? '.faq details' : '.sl-none')), 0, 3)
+          .map(function (st) { return T(st) + Math.min(st.offsetHeight / 2, 40); })
+      };
+    });
+    var fr = form.getBoundingClientRect();
+    var fx = fr.left - r.left, fy = fr.top - r.top, fw = fr.width, fh = fr.height;
+
+    /* גיאומטריה */
+    var side = R, pts = [], marks = [];
+    pts.push({ x: logoX, y: logoY + 4 });
+    pts.push({ x: R, y: logoY + 110 });
+    secInfo.forEach(function (s, i) {
       if (i > 0) {
         var other = side === R ? L : R;
-        /* חוצים רק ברווח הריק: בין סוף התוכן של הסקשן הקודם לתחילת התוכן של זה */
-        var prev = s.previousElementSibling || secs[i - 1], cs = getComputedStyle(s), ps = getComputedStyle(prev);
-        var from = top(prev, r) + prev.offsetHeight - parseFloat(ps.paddingBottom) + 10;
-        var to = y0 + parseFloat(cs.paddingTop) - 10;
-        if (to - from < 40) { from = y0 - 40; to = y0 - 4; }
+        var from = s.prevContentBottom + 10, to = s.top + s.padTop - 10;
+        if (to - from < 40) { from = s.top - 40; to = s.top - 4; }
         pts.push({ x: side, y: from });
         pts.push({ x: other, y: to });
         side = other;
       }
-      var sel = s.id === 'services' ? '.svc-group' : s.id === 'how' ? '.steps li' : (s.querySelector('.faq') ? '.faq details' : '');
-      if (sel) Array.prototype.slice.call(s.querySelectorAll(sel), 0, 3).forEach(function (st) {
-        marks.push({ x: side, y: top(st, r) + Math.min(st.offsetHeight / 2, 40) });
-      });
+      if (!(w < 700 && s.faq)) s.stops.forEach(function (y) { marks.push({ x: side, y: y }); });
     });
-    var lastSec = secs[secs.length - 1];
-    var cta = lastSec.querySelector('.direct .btn') || lastSec.querySelector('.direct a');
-    var end;
-    if (cta) {
-      var cr = cta.getBoundingClientRect(), cy = cr.top - r.top + cr.height / 2;
-      pts.push({ x: side, y: cy - 70 });
-      end = { x: side === R ? Math.min(cr.right - r.left + 10, R) : Math.max(cr.left - r.left - 10, L), y: cy };
-    } else {
-      var ey = top(lastSec, r) + Math.min(lastSec.offsetHeight * 0.5, 260);
-      pts.push({ x: side, y: ey });
-      end = { x: side, y: ey + 60 };
+    /* לולאה סביב הטופס */
+    var m = 14, rad = 26;
+    var lx = fx - m, ly = fy - m, lw = fw + 2 * m, lh = fh + 2 * m;     /* בקואורדינטות main */
+    var startOnRight = side === R || (fx + fw / 2 > w / 2);
+    var sx = startOnRight ? lx + lw - rad : lx + rad;                    /* נקודת פתיחה על הקצה העליון */
+    var sy = ly;
+    pts.push({ x: side, y: sy - 70 });
+    var end = { x: sx, y: sy };
+    var d = 'M ' + pts[0].x + ' ' + pts[0].y;
+    var cum = [{ y: pts[0].y, len: 0 }];       /* אורך מצטבר, להצבת עיגולים */
+    function seg(a, b, c, e) {
+      var prev = { x: a.x, y: a.y };
+      for (var i = 1; i <= 16; i++) {
+        var t = i / 16, p = { x: bez(a.x, b.x, c.x, e.x, t), y: bez(a.y, b.y, c.y, e.y, t) };
+        cum.push({ y: p.y, len: cum[cum.length - 1].len + Math.hypot(p.x - prev.x, p.y - prev.y) });
+        prev = p;
+      }
     }
-    var p = 'M ' + pts[0].x + ' ' + pts[0].y;
     for (var i = 1; i < pts.length; i++) {
       var a = pts[i - 1], b = pts[i], dy = (b.y - a.y) * 0.5;
-      p += ' C ' + a.x + ' ' + (a.y + dy) + ', ' + b.x + ' ' + (b.y - dy) + ', ' + b.x + ' ' + b.y;
+      d += ' C ' + a.x + ' ' + (a.y + dy) + ', ' + b.x + ' ' + (b.y - dy) + ', ' + b.x + ' ' + b.y;
     }
-    var l = pts[pts.length - 1], dy2 = (end.y - l.y) * 0.5;
-    p += ' C ' + l.x + ' ' + (l.y + dy2) + ', ' + end.x + ' ' + (end.y - dy2) + ', ' + end.x + ' ' + end.y;
+    var last = pts[pts.length - 1], dy2 = (end.y - last.y) * 0.5;
+    d += ' C ' + last.x + ' ' + (last.y + dy2) + ', ' + end.x + ' ' + (end.y - dy2) + ', ' + end.x + ' ' + end.y;
+    mainPath.setAttribute('d', d);
+
     svg.setAttribute('width', w); svg.setAttribute('height', h);
     svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-    track.setAttribute('d', p); draw.setAttribute('d', p);
-    total = draw.getTotalLength();
-    draw.style.strokeDasharray = total;
-    samples = [];
-    for (var t = 0; t <= total; t += 6) samples.push({ t: t, y: draw.getPointAtLength(t).y });
-    stopEls.forEach(function (c) { svg.removeChild(c); });
-    stopEls = []; stops = [];
-    marks.forEach(function (m) {
-      var best = 0, bd = 1e9;
-      for (var j = 0; j < samples.length; j++) {
-        var pt = draw.getPointAtLength(samples[j].t);
-        var dd = Math.abs(pt.y - m.y) + Math.abs(pt.x - m.x) * 0.2;
-        if (dd < bd) { bd = dd; best = samples[j].t; }
-      }
-      var q2 = draw.getPointAtLength(best);
-      var c = document.createElementNS(NS, 'circle');
-      c.setAttribute('cx', q2.x); c.setAttribute('cy', q2.y); c.setAttribute('r', 5.5);
-      c.setAttribute('class', 'sl-stop');
-      svg.appendChild(c); stopEls.push(c); stops.push(best);
+    while (svg.childNodes.length > 1) svg.removeChild(svg.lastChild);
+    marks.forEach(function (mk) {
+      svg.appendChild(el('circle', { cx: mk.x, cy: mk.y, r: 5.5, 'class': 'sl-stop' }));
     });
-    var ec = document.createElementNS(NS, 'circle');
-    ec.setAttribute('cx', end.x); ec.setAttribute('cy', end.y); ec.setAttribute('r', 5.5); ec.setAttribute('class', 'sl-stop');
-    svg.appendChild(ec); stopEls.push(ec); stops.push(total);
-    lastShown = -1;
+    startY = logoY; headMax = end.y; mainH = h;
+
+    /* הלולאה: SVG קטן משלו, מצויר לפי התקדמות הגלילה */
+    var lw2 = lw, lh2 = lh;
+    loopSvg.style.left = lx + 'px'; loopSvg.style.top = ly + 'px';
+    loopSvg.setAttribute('width', lw2); loopSvg.setAttribute('height', lh2);
+    loopSvg.setAttribute('viewBox', '0 0 ' + lw2 + ' ' + lh2);
+    var x0 = startOnRight ? lw2 - rad : rad;
+    var ld = startOnRight
+      ? 'M ' + x0 + ' 0 H ' + rad + ' A ' + rad + ' ' + rad + ' 0 0 0 0 ' + rad + ' V ' + (lh2 - rad) + ' A ' + rad + ' ' + rad + ' 0 0 0 ' + rad + ' ' + lh2 + ' H ' + (lw2 - rad) + ' A ' + rad + ' ' + rad + ' 0 0 0 ' + lw2 + ' ' + (lh2 - rad) + ' V ' + rad + ' A ' + rad + ' ' + rad + ' 0 0 0 ' + (lw2 - rad) + ' 0 Z'
+      : 'M ' + x0 + ' 0 H ' + (lw2 - rad) + ' A ' + rad + ' ' + rad + ' 0 0 1 ' + lw2 + ' ' + rad + ' V ' + (lh2 - rad) + ' A ' + rad + ' ' + rad + ' 0 0 1 ' + (lw2 - rad) + ' ' + lh2 + ' H ' + rad + ' A ' + rad + ' ' + rad + ' 0 0 1 0 ' + (lh2 - rad) + ' V ' + rad + ' A ' + rad + ' ' + rad + ' 0 0 1 ' + rad + ' 0 Z';
+    loopPath.setAttribute('d', ld);
+    loopLen = 2 * (lw2 + lh2) - (8 - 2 * Math.PI) * rad;
+    loopPath.style.strokeDasharray = loopLen;
+    loopTop = ly; loopH = lh2; loopStartY = ly;
+    lastBuildH = h; lastBuildW = w;
+    built = true; lastClip = lastLoop = -1;
     update();
   }
 
   function update() {
     raf = 0;
-    if (!total) return;
-    var shown = total;
-    if (!reduced) {
-      var y = (window.pageYOffset || document.documentElement.scrollTop) + window.innerHeight * 0.6 - (main.getBoundingClientRect().top + (window.pageYOffset || 0));
-      shown = 0;
-      for (var i = 0; i < samples.length; i++) { if (samples[i].y <= y) shown = samples[i].t; else break; }
-      if (y >= samples[samples.length - 1].y) shown = total;
+    if (!built) { build(); return; }
+    var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var mainTop = main.getBoundingClientRect().top + sy;
+    var vh = window.innerHeight;
+    var head, loopP;
+    if (reduced) { head = mainH; loopP = 1; }
+    else {
+      /* בגלילה 0 הראש בלוגו (שום דבר לא נראה); תוך חצי מסך גלילה הוא עובר ל־60% מגובה המסך */
+      var k = Math.min(1, sy / (vh * 0.4));
+      var screenPos = (startY + mainTop) * (1 - k) + vh * 0.6 * k;     /* מקום הראש על המסך */
+      head = sy + screenPos - mainTop;
+      loopP = Math.max(0, Math.min(1, (sy + vh * 0.8 - mainTop - loopTop) / (loopH + vh * 0.15)));
+      if (sy <= 0) head = startY;
     }
-    if (shown === lastShown) return;
-    lastShown = shown;
-    draw.style.strokeDashoffset = total - shown;
-    for (var k = 0; k < stops.length; k++) stopEls[k].setAttribute('class', 'sl-stop' + (shown >= stops[k] ? ' on' : ''));
+    if (head > headMax) head = mainH;
+    var clip = Math.max(0, Math.round(mainH - head));
+    if (clip !== lastClip) { lastClip = clip; svg.style.clipPath = 'inset(0 0 ' + clip + 'px 0)'; }
+    var lp = Math.round(loopP * 400);
+    if (head < headMax && !reduced) lp = 0;
+    if (lp !== lastLoop) { lastLoop = lp; loopPath.style.strokeDashoffset = loopLen * (1 - lp / 400); loopSvg.style.visibility = lp ? 'visible' : 'hidden'; }
   }
 
   function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
-  function scheduleBuild() { if (!buildRaf) buildRaf = requestAnimationFrame(build); }
+  function scheduleBuild(ms) { if (buildTimer) clearTimeout(buildTimer); buildTimer = setTimeout(function () { requestAnimationFrame(build); }, ms || 120); }
 
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', scheduleBuild);
-  window.addEventListener('load', scheduleBuild);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleBuild);
-  if (window.ResizeObserver) new ResizeObserver(function () { scheduleBuild(); }).observe(main);
-  if (mq && mq.addEventListener) mq.addEventListener('change', function () { reduced = mq.matches; lastShown = -1; update(); });
-  build();
+  window.addEventListener('resize', function () { scheduleBuild(200); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { scheduleBuild(50); });
+  if (window.ResizeObserver) {
+    var first = true;
+    new ResizeObserver(function () {
+      if (first) { first = false; return; }
+      var h = main.scrollHeight, w = main.clientWidth;
+      if (Math.abs(h - lastBuildH) > 2 || w !== lastBuildW) scheduleBuild(150);
+    }).observe(main);
+  }
+  if (mq && mq.addEventListener) mq.addEventListener('change', function () { reduced = mq.matches; lastClip = lastLoop = -1; update(); });
+
+  /* בנייה ראשונה אחרי הטעינה, בזמן פנוי, כדי לא להתחרות בטעינת התוכן */
+  svg.style.clipPath = 'inset(0 0 100% 0)'; loopSvg.style.visibility = 'hidden';
+  function init() { if ('requestIdleCallback' in window) requestIdleCallback(build, { timeout: 800 }); else setTimeout(build, 200); }
+  if (document.readyState === 'complete') init(); else window.addEventListener('load', init);
 })();

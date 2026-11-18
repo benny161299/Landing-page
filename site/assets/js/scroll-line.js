@@ -84,7 +84,8 @@
     /* גיאומטריה */
     var side = R, pts = [], marks = [];
     pts.push({ x: logoX, y: logoY + 4 });
-    pts.push({ x: R, y: logoY + 110 });
+    pts.push({ x: R, y: logoY + 4 });     /* לאורך תחתית הכותרת, בלי לחצות טקסט */
+    pts.push({ x: R, y: logoY + 40 });
     secInfo.forEach(function (s, i) {
       if (i > 0) {
         var other = side === R ? L : R;
@@ -103,23 +104,12 @@
     var sx = startOnRight ? lx + lw - rad : lx + rad;                    /* נקודת פתיחה על הקצה העליון */
     var sy = ly;
     pts.push({ x: side, y: sy - 70 });
-    var end = { x: sx, y: sy };
+    /* y עולה תמיד (אחרת החיתוך חושף קטעים שלא לפי הסדר בגלילה לאחור); מעברים בין הצדדים בקו ישר */
+    pts.push({ x: sx, y: sy });
+    for (var pi = 1; pi < pts.length; pi++) if (pts[pi].y < pts[pi - 1].y + 2) pts[pi].y = pts[pi - 1].y + 2;
+    var end = pts[pts.length - 1];
     var d = 'M ' + pts[0].x + ' ' + pts[0].y;
-    var cum = [{ y: pts[0].y, len: 0 }];       /* אורך מצטבר, להצבת עיגולים */
-    function seg(a, b, c, e) {
-      var prev = { x: a.x, y: a.y };
-      for (var i = 1; i <= 16; i++) {
-        var t = i / 16, p = { x: bez(a.x, b.x, c.x, e.x, t), y: bez(a.y, b.y, c.y, e.y, t) };
-        cum.push({ y: p.y, len: cum[cum.length - 1].len + Math.hypot(p.x - prev.x, p.y - prev.y) });
-        prev = p;
-      }
-    }
-    for (var i = 1; i < pts.length; i++) {
-      var a = pts[i - 1], b = pts[i], dy = (b.y - a.y) * 0.5;
-      d += ' C ' + a.x + ' ' + (a.y + dy) + ', ' + b.x + ' ' + (b.y - dy) + ', ' + b.x + ' ' + b.y;
-    }
-    var last = pts[pts.length - 1], dy2 = (end.y - last.y) * 0.5;
-    d += ' C ' + last.x + ' ' + (last.y + dy2) + ', ' + end.x + ' ' + (end.y - dy2) + ', ' + end.x + ' ' + end.y;
+    for (var i = 1; i < pts.length; i++) d += ' L ' + pts[i].x + ' ' + pts[i].y;
     mainPath.setAttribute('d', d);
 
     svg.setAttribute('width', w); svg.setAttribute('height', h);

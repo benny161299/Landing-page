@@ -113,12 +113,13 @@
     /* לולאה סביב הטופס */
     var m = 14, rad = 26;
     var lx = fx - m, ly = fy - m, lw = fw + 2 * m, lh = fh + 2 * m;     /* בקואורדינטות main */
-    var startOnRight = fx + fw / 2 > w / 2;
-    var sx = startOnRight ? lx + lw - rad : lx + rad;                    /* נקודת פתיחה על הקצה העליון */
     var sy = ly;
-    var yEntry = lastYm === null ? sy - 40 : Math.min(lastYm, sy - 6);
-    pts.push({ x: side, y: yEntry });
-    pts.push({ x: sx, y: yEntry });
+    var wantRight = fx + fw / 2 > w / 2;
+    /* נכנסים לטופס מהשוליים הקרובים אליו (לא דרך הטקסט שמעליו): חוצים בחלל הריק, יורדים בשוליים, ואז פנייה קצרה לפינת הלולאה */
+    if (lastYm !== null && lastYm < sy - 20 && side !== (wantRight ? R : L)) cross(lastYm);
+    var startOnRight = side === R;                                       /* פינת הפתיחה של הלולאה בצד של הקו, כך שאין מעבר אופקי ארוך */
+    var sx = startOnRight ? lx + lw - rad : lx + rad;                    /* נקודת פתיחה על הקצה העליון */
+    pts.push({ x: side, y: sy });
     pts.push({ x: sx, y: sy });
     /* y לא יורד אף פעם (אחרת החיתוך חושף קטעים שלא לפי הסדר בגלילה לאחור) */
     for (var pi = 1; pi < pts.length; pi++) if (pts[pi].y < pts[pi - 1].y) pts[pi].y = pts[pi - 1].y;

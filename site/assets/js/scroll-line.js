@@ -49,7 +49,9 @@
     var r = main.getBoundingClientRect();
     var w = main.clientWidth, h = main.scrollHeight;
     var docTop = r.top + (window.pageYOffset || 0);
-    function T(n) { return n.getBoundingClientRect().top - r.top; }
+    /* מיקום לפי פריסה (offsetTop/Left), לא לפי getBoundingClientRect: אנימציות חשיפה (transform) משנות את ה־rect לפי מקום הגלילה בזמן הבנייה */
+    function off(n) { var y = 0, x = 0, e = n; while (e && e !== main) { y += e.offsetTop; x += e.offsetLeft; e = e.offsetParent; } return e === main ? { x: x, y: y } : null; }
+    function T(n) { var o = off(n); return o ? o.y : n.getBoundingClientRect().top - r.top; }
     var q = function (s) { return main.querySelector(s); };
     var faqH = q('#home-faq-h');
     var secs = [q('.hero'), q('#services'), q('#how'), q('#about'), q('section.band:not(#contact)'), faqH && faqH.closest('section'), q('#contact')]
@@ -66,7 +68,8 @@
     var R = w - gut, L = gut;
     var lr = logo.getBoundingClientRect(), hdr = logo.closest('header');
     var logoX = lr.left - r.left + lr.width / 2;
-    var logoY = hdr ? hdr.offsetTop + hdr.offsetHeight - main.offsetTop : 70;
+    /* לא להשתמש ב־hdr.offsetTop: הכותרת דביקה (sticky), והערך שלה תלוי במקום הגלילה בזמן הבנייה - זה שבר את הקו אחרי בנייה מחדש באמצע הגלילה */
+    var logoY = hdr ? Math.max(0, hdr.offsetHeight - main.offsetTop) : 0;
     var secInfo = secs.map(function (s) {
       var cs = getComputedStyle(s), ps = s.previousElementSibling ? getComputedStyle(s.previousElementSibling) : null;
       var prev = s.previousElementSibling;
@@ -74,39 +77,51 @@
         top: T(s), padTop: parseFloat(cs.paddingTop),
         prevContentBottom: prev ? T(prev) + prev.offsetHeight - parseFloat(ps.paddingBottom) : 0,
         faq: !!s.querySelector('.faq'), id: s.id,
-        stops: [].slice.call(s.querySelectorAll(s.id === 'services' ? '.svc-group' : s.id === 'how' ? '.steps li' : (s.querySelector('.faq') ? '.faq details' : '.sl-none')), 0, 3)
-          .map(function (st) { return T(st) + Math.min(st.offsetHeight / 2, 40); })
+        stops: [].slice.call(s.querySelectorAll(s.id === 'services' ? '.svc-group' : s.id === 'how' ? '.steps li' : (s.querySelector('.faq') ? '.faq details' : '.sl-none')), 0, 6)
+          .map(function (st) { var t = T(st); return { t: t, b: t + st.offsetHeight, m: t + Math.min(st.offsetHeight / 2, 40) }; })
       };
     });
-    var fr = form.getBoundingClientRect();
-    var fx = fr.left - r.left, fy = fr.top - r.top, fw = fr.width, fh = fr.height;
+    var fo = off(form);
+    var fx = fo ? fo.x : form.getBoundingClientRect().left - r.left, fy = T(form), fw = form.offsetWidth, fh = form.offsetHeight;
 
     /* גיאומטריה */
     var side = R, pts = [], marks = [];
     pts.push({ x: logoX, y: logoY + 4 });
     pts.push({ x: R, y: logoY + 4 });     /* לאורך תחתית הכותרת, בלי לחצות טקסט */
     pts.push({ x: R, y: logoY + 40 });
+    var lastYm = null;
+    function cross(y) {          /* מעבר אופקי ישר לצד השני, בפינות של 90 מעלות */
+      pts.push({ x: side, y: y });
+      side = side === R ? L : R;
+      pts.push({ x: side, y: y });
+    }
     secInfo.forEach(function (s, i) {
+      var isLast = i === secInfo.length - 1;
       if (i > 0) {
-        var other = side === R ? L : R;
         var from = s.prevContentBottom + 10, to = s.top + s.padTop - 10;
         if (to - from < 40) { from = s.top - 40; to = s.top - 4; }
-        pts.push({ x: side, y: from });
-        pts.push({ x: other, y: to });
-        side = other;
+        var ym = (from + to) / 2;
+        if (isLast) lastYm = ym; else cross(ym);
       }
-      if (!(w < 700 && s.faq)) s.stops.forEach(function (y) { marks.push({ x: side, y: y }); });
+      if (isLast) return;
+      s.stops.forEach(function (st, j) {
+        if (!(w < 700 && s.faq)) marks.push({ x: side, y: st.m });
+        var nx = s.stops[j + 1];
+        if (nx && nx.t - st.b >= 14) cross((st.b + nx.t) / 2);     /* אלמנט חדש: עוברים צד */
+      });
     });
     /* לולאה סביב הטופס */
     var m = 14, rad = 26;
     var lx = fx - m, ly = fy - m, lw = fw + 2 * m, lh = fh + 2 * m;     /* בקואורדינטות main */
-    var startOnRight = side === R || (fx + fw / 2 > w / 2);
+    var startOnRight = fx + fw / 2 > w / 2;
     var sx = startOnRight ? lx + lw - rad : lx + rad;                    /* נקודת פתיחה על הקצה העליון */
     var sy = ly;
-    pts.push({ x: side, y: sy - 70 });
-    /* y עולה תמיד (אחרת החיתוך חושף קטעים שלא לפי הסדר בגלילה לאחור); מעברים בין הצדדים בקו ישר */
+    var yEntry = lastYm === null ? sy - 40 : Math.min(lastYm, sy - 6);
+    pts.push({ x: side, y: yEntry });
+    pts.push({ x: sx, y: yEntry });
     pts.push({ x: sx, y: sy });
-    for (var pi = 1; pi < pts.length; pi++) if (pts[pi].y < pts[pi - 1].y + 2) pts[pi].y = pts[pi - 1].y + 2;
+    /* y לא יורד אף פעם (אחרת החיתוך חושף קטעים שלא לפי הסדר בגלילה לאחור) */
+    for (var pi = 1; pi < pts.length; pi++) if (pts[pi].y < pts[pi - 1].y) pts[pi].y = pts[pi - 1].y;
     var end = pts[pts.length - 1];
     var d = 'M ' + pts[0].x + ' ' + pts[0].y;
     for (var i = 1; i < pts.length; i++) d += ' L ' + pts[i].x + ' ' + pts[i].y;
@@ -151,14 +166,13 @@
       var k = Math.min(1, sy / (vh * 0.4));
       var screenPos = (startY + mainTop) * (1 - k) + vh * 0.6 * k;     /* מקום הראש על המסך */
       head = sy + screenPos - mainTop;
-      loopP = Math.max(0, Math.min(1, (sy + vh * 0.8 - mainTop - loopTop) / (loopH + vh * 0.15)));
+      loopP = Math.max(0, Math.min(1, (head - headMax) / (loopH + vh * 0.1)));   /* מתחילה בדיוק כשהקו הראשי מגיע לקצה, ונמחקת אחורה באותו קצב */
       if (sy <= 0) head = startY;
     }
     if (head > headMax) head = mainH;
     var clip = Math.max(0, Math.round(mainH - head));
     if (clip !== lastClip) { lastClip = clip; svg.style.clipPath = 'inset(0 0 ' + clip + 'px 0)'; }
     var lp = Math.round(loopP * 400);
-    if (head < headMax && !reduced) lp = 0;
     if (lp !== lastLoop) { lastLoop = lp; loopPath.style.strokeDashoffset = loopLen * (1 - lp / 400); loopSvg.style.visibility = lp ? 'visible' : 'hidden'; }
   }
 

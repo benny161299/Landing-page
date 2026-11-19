@@ -106,7 +106,8 @@
       setToggleState(next === 'dark'); // האייקון מתחלף מיד באנימציה משלו
       const old = $('.theme-veil');
       if (old) old.remove();
-      if (reduce || !doc.body) { applyThemeAttr(next); return; }
+      const stillNow = reduce || Boolean(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if (stillNow || !doc.body) { applyThemeAttr(next); return; }
       /* צעיף אטום בצבע הרקע של היעד: נכנס, ההחלפה מתבצעת מתחתיו, ודוהה החוצה.
          בלי מעבר-צבעים הדרגתי — אין פריים עם חזית/רקע בלתי קריאים */
       setTimeout(() => {

@@ -4,10 +4,8 @@
   'use strict';
   const doc = document;
 
-  // ניקוי שאריות theme ישנות וסנכרון דגלי ווידג'טים מ-localStorage
+  // סנכרון דגלי ווידג'טים מ-localStorage (הנושא מנוהל על ידי consent.js ומתג הכותרת)
   try {
-    localStorage.removeItem('theme');
-    doc.documentElement.removeAttribute('data-theme');
     if (localStorage.getItem('asw_accessibility_widget_dismissed') === 'true') {
       doc.documentElement.setAttribute('data-asw-dismissed', 'true');
     }

@@ -1,7 +1,7 @@
 /* nav.js — ניווט ראשי: תפריט מובייל, תתי-תפריטים, קישור דילוג. נטען בכל עמוד. */
 (function () {
   'use strict';
-  const { doc, $, $$, el, svgEl } = window.RL;
+  const { doc, $, $$, el, svgEl, reduce } = window.RL;
 
   const menuBtn = $('.menu-btn'), nav = $('#nav');
 
@@ -84,4 +84,29 @@
     const m = doc.getElementById('main');
     if (m) { m.setAttribute('tabindex', '-1'); m.focus(); }
   });
+
+  /* מתג מצב תצוגה (בהיר/כהה): שומר בחירה ידנית ב-localStorage, מחליף אייקון שמש/ירח,
+     ומפעיל מעבר צבעים קצר דרך המחלקה theming (נדלג כשמופעלת הפחתת תנועה) */
+  const themeBtn = $('.theme-toggle');
+  if (themeBtn) {
+    const themeMeta = doc.querySelector('meta[name="theme-color"]');
+    const syncThemeToggle = () => {
+      const dark = doc.documentElement.getAttribute('data-theme') === 'dark';
+      themeBtn.setAttribute('aria-pressed', String(dark));
+      themeBtn.setAttribute('aria-label', dark ? 'מעבר למצב בהיר' : 'מעבר למצב כהה');
+      if (themeMeta) themeMeta.setAttribute('content', dark ? '#0C1F22' : '#14393D');
+    };
+    syncThemeToggle();
+    themeBtn.addEventListener('click', () => {
+      const dark = doc.documentElement.getAttribute('data-theme') === 'dark';
+      const next = dark ? 'light' : 'dark';
+      try { localStorage.setItem('rl-theme', next); } catch (_) {}
+      if (!reduce) {
+        doc.documentElement.classList.add('theming');
+        setTimeout(() => doc.documentElement.classList.remove('theming'), 460);
+      }
+      doc.documentElement.setAttribute('data-theme', next);
+      syncThemeToggle();
+    });
+  }
 })();

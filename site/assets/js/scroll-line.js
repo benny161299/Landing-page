@@ -45,6 +45,7 @@
 
   var built = false, hb = 0, haloTop = 0, haloH = 0;
   var lastT = null, lastO = -1, lastF = -1, raf = 0, buildTimer = 0, lastW = 0;
+  var portraitImg = main.querySelector('.portrait img'), lastPP = -1;
 
   /* מיקום לפי פריסה (offsetTop/Left), לא לפי getBoundingClientRect: אנימציות חשיפה (transform) משנות את ה־rect לפי מקום הגלילה */
   function off(n) { var y = 0, x = 0, e = n; while (e && e !== main) { y += e.offsetTop; x += e.offsetLeft; e = e.offsetParent; } return e === main ? { x: x, y: y } : null; }
@@ -103,6 +104,15 @@
     if (o !== lastO) { lastO = o; rail.style.opacity = o / 20; }
     var f = Math.round(fp * 100);
     if (f !== lastF) { lastF = f; halo.style.opacity = f / 100; }
+    updatePortrait(sy, still);
+  }
+
+  /* התמונה של רחל נכנסת למסגרת בגלילה כלפי מטה: --pp=0 מחוץ למסגרת בראש העמוד, 1 בתוכה.
+     בהפחתת תנועה או "עצירת אנימציות" נשארת תמיד בתוך המסגרת (1) בלי תנועה. */
+  function updatePortrait(sy, still) {
+    if (!portraitImg) return;
+    var r = Math.round((still ? 1 : clamp(sy / 320)) * 100);
+    if (r !== lastPP) { lastPP = r; portraitImg.style.setProperty('--pp', String(r / 100)); }
   }
 
   function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
@@ -124,6 +134,7 @@
 
   /* חיבור לכפתור "עצירת אנימציות": מעקב אחרי המחלקה ב־<html> (שינוי באותו טאב) ואירוע storage (טאב אחר) */
   stopped = readStopped();
+  updatePortrait(window.pageYOffset || document.documentElement.scrollTop || 0, reduced || stopped);
   if (window.MutationObserver) new MutationObserver(onStopChange).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('storage', function (e) { if (!e.key || e.key === 'asw-user-settings') onStopChange(); });
 

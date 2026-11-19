@@ -1,3 +1,22 @@
+/* אתחול ערכת הנושא (בהיר/כהה) - רץ בראש כל עמוד לפני הציור הראשון כדי למנוע הבהוב:
+   בחירה ידנית במתג הכותרת נשמרת ב-localStorage ('rl-theme'); בלעדיה נקבע לפי העדפת המכשיר,
+   ושינוי העדפת המכשיר מתעדכן אוטומטית כל עוד לא נשמרה בחירה ידנית. */
+(function () {
+  'use strict';
+  var root = document.documentElement;
+  var mq = window.matchMedia ? matchMedia('(prefers-color-scheme: dark)') : null;
+  function manual() {
+    try { var t = localStorage.getItem('rl-theme'); return (t === 'light' || t === 'dark') ? t : null; } catch (_) { return null; }
+  }
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute('content', t === 'dark' ? '#0C1F22' : '#14393D');
+  }
+  applyTheme(manual() || (mq && mq.matches ? 'dark' : 'light'));
+  if (mq && mq.addEventListener) mq.addEventListener('change', function () { if (!manual()) applyTheme(mq.matches ? 'dark' : 'light'); });
+})();
+
 /* consent.js — באנר הסכמה לעוגיות וטעינת Google Analytics רק לאחר אישור.
    נטען בראש כל עמוד במקום קוד ה־GA הישיר:
    - ללא בחירה: GA לא נטען כלל ומוצג באנר קטן בתחתית העמוד.

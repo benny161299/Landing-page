@@ -17,6 +17,10 @@
   --arch-bg: #E4E2DE;
   --foot: #0E2427;
   --focus: #1F6F78;
+  --cream: #F3EEE2;
+  --cream-muted: #C4D1C9;
+  --hero-bg1: #12343B;
+  --hero-bg2: #0C1F22;
 
   --serif: "Noto Serif Hebrew", "Frank Ruhl Libre", "David", "Times New Roman", serif;
   --sans: "Noto Sans Hebrew", "Assistant", "Segoe UI", Tahoma, Arial, sans-serif;
@@ -116,13 +120,26 @@ p { margin: 0; }
 .top .btn { min-height: 44px; padding: 8px 20px; font-size: 1rem; }
 
 /* Hero */
-.hero { padding-block: clamp(40px, 7vw, 88px) clamp(48px, 7vw, 80px); }
+.hero {
+  padding-block: clamp(40px, 7vw, 88px) clamp(48px, 7vw, 80px);
+  background: linear-gradient(180deg, var(--hero-bg1) 0%, var(--hero-bg2) 82%);
+  color: var(--cream);
+}
 .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(32px, 6vw, 80px); align-items: center; }
-.hero h1 { font-size: clamp(2.5rem, 5.6vw, 4.2rem); line-height: 1.1; letter-spacing: -0.01em; }
-.hero .sub { margin-top: 22px; font-size: 1.15rem; max-width: 46ch; color: var(--muted); }
-.hero .sub b { color: var(--ink); font-weight: 600; }
+.hero h1 { font-size: clamp(2.1rem, 4vw, 2.8rem); line-height: 1.14; letter-spacing: -0.01em; }
+.hero .sub { margin-top: 22px; font-size: 1.15rem; max-width: 46ch; color: var(--cream-muted); }
+.hero .sub b { color: var(--brass-fill); font-weight: 600; }
 .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
 .fine { margin-top: 18px; font-size: .95rem; color: var(--muted); }
+.hero .fine { color: #AAB9B1; }
+.hero .btn-primary { background: var(--brass-fill); color: var(--on-brass); }
+.hero .btn-primary:hover { filter: brightness(1.08); }
+.hero .btn-ghost { border-color: rgba(243, 238, 226, .55); color: var(--cream); }
+.hero .btn-ghost:hover { background: var(--cream); border-color: var(--cream); color: var(--hero-bg2); }
+.hero :focus-visible { outline-color: var(--brass-fill); }
+.hero .portrait::before { border-color: var(--brass-fill); }
+.hero .portrait img { box-shadow: 0 16px 38px rgba(0, 0, 0, .42); }
+.hero .portrait:hover img { box-shadow: 0 20px 44px rgba(0, 0, 0, .5); }
 
 .portrait {
   position: relative;
@@ -177,6 +194,13 @@ p { margin: 0; }
     line-height: 1.26;
     letter-spacing: -0.01em;
     max-width: 24ch;
+  }
+  .hero .sub {
+    margin-top: 14px;
+    font-size: 1.05rem;
+  }
+  .hero .sub-remote {
+    display: none;
   }
   .hero .cta-row {
     margin-top: 20px;

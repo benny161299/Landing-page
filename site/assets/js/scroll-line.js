@@ -1,15 +1,16 @@
-/* scroll-line.js - פס זהב קצר עם זנב דועך שמלווה את הגלילה בשוליים, ובסוף נעשה מסגרת עדינה סביב טופס יצירת הקשר.
-   קל במכוון: אלמנט אחד קבוע (position:fixed) שמוזז רק ב־transform, ומסגרת SVG קטנה אחת סביב הטופס.
-   אין מסלול ארוך, אין חיתוך של SVG גדול, והמיקום תלוי רק במקום הגלילה הנוכחי (לא במצב קודם), ולכן גם בגלילה לאחור הכול עקבי.
+/* scroll-line.js - פס זהב קצר עם זנב דועך שמלווה את הגלילה בשוליים עד סוף העמוד, ובאזור טופס יצירת הקשר נוצרת הילת זהב עדינה סביבו.
+   קל במכוון: אלמנט אחד קבוע (position:fixed) שמוזז רק ב־transform, ואלמנט הילה אחד שמשתנה רק ב־opacity.
+   המצב תלוי רק במקום הגלילה הנוכחי (לא במצב קודם), ולכן גם בגלילה לאחור וגם בשינוי גובה החלון הכול עקבי.
+   מכבד את כפתור "עצירת אנימציות" של ווידג'ט הנגישות (asw-stop-animations) ואת prefers-reduced-motion: הפס נעלם וההילה נשארת סטטית.
    דקורטיבי בלבד (aria-hidden). */
 (function () {
   'use strict';
   var main = document.getElementById('main');
   var form = main && main.querySelector('#home-form');
-  if (!main || !form || !window.SVGElement) return;
-  var NS = 'http://www.w3.org/2000/svg';
+  if (!main || !form) return;
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduced = !!(mq && mq.matches);
+  var stopped = false;
   var TAIL = 170;
 
   var css = document.createElement('style');
@@ -17,10 +18,14 @@
     '.sl-rail{position:fixed;bottom:0;width:4px;overflow:hidden;pointer-events:none;z-index:5;contain:strict;opacity:0}' +
     '.sl-comet{position:absolute;left:0;top:0;width:100%;height:' + TAIL + 'px;border-radius:4px;will-change:transform;' +
     'background:linear-gradient(to bottom,rgba(209,168,98,0),rgba(209,168,98,.55) 70%,#D1A862)}' +
-    '.sl-frame{position:absolute;pointer-events:none;z-index:5;overflow:visible;visibility:hidden}' +
-    '.sl-line{fill:none;stroke:#D1A862;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}' +
+    '.sl-halo{position:absolute;pointer-events:none;z-index:5;opacity:0}' +
+    '.sl-halo-glow{position:absolute;inset:0;border-radius:inherit;' +
+    'box-shadow:0 0 24px 6px rgba(209,168,98,.55),0 0 70px 22px rgba(209,168,98,.22);' +
+    'animation:sl-halo-pulse 3.4s ease-in-out infinite alternate}' +
+    '@keyframes sl-halo-pulse{from{opacity:.72}to{opacity:1}}' +
     '.marquee{position:relative;z-index:6}' +
-    '@media print,(forced-colors:active){.sl-rail,.sl-frame{display:none}}';
+    '@media (prefers-reduced-motion:reduce){.sl-halo-glow{animation:none}}' +
+    '@media print,(forced-colors:active){.sl-rail,.sl-halo{display:none}}';
   document.head.appendChild(css);
 
   var rail = document.createElement('div');
@@ -30,19 +35,29 @@
   rail.appendChild(comet);
   document.body.appendChild(rail);
 
-  var frame = document.createElementNS(NS, 'svg');
-  frame.setAttribute('class', 'sl-frame'); frame.setAttribute('aria-hidden', 'true'); frame.setAttribute('focusable', 'false');
-  var framePath = document.createElementNS(NS, 'path');
-  framePath.setAttribute('class', 'sl-line');
-  frame.appendChild(framePath);
+  var halo = document.createElement('div');
+  halo.className = 'sl-halo'; halo.setAttribute('aria-hidden', 'true');
+  var haloGlow = document.createElement('div');
+  haloGlow.className = 'sl-halo-glow';
+  halo.appendChild(haloGlow);
   if (getComputedStyle(main).position === 'static') main.style.position = 'relative';
-  main.insertBefore(frame, main.firstChild);
+  main.insertBefore(halo, main.firstChild);
 
-  var built = false, hb = 0, frameTop = 0, frameH = 0, frameLen = 0;
+  var built = false, hb = 0, haloTop = 0, haloH = 0;
   var lastT = null, lastO = -1, lastF = -1, raf = 0, buildTimer = 0, lastW = 0;
 
   /* מיקום לפי פריסה (offsetTop/Left), לא לפי getBoundingClientRect: אנימציות חשיפה (transform) משנות את ה־rect לפי מקום הגלילה */
   function off(n) { var y = 0, x = 0, e = n; while (e && e !== main) { y += e.offsetTop; x += e.offsetLeft; e = e.offsetParent; } return e === main ? { x: x, y: y } : null; }
+
+  /* "עצירת אנימציות" של הווידג'ט: הווידג'ט מוסיף מחלקה ל־<html> ושומר ב־localStorage. הבדיקה כפולה כדי לתפוס גם מצב שמור לפני שהווידג'ט נטען */
+  function readStopped() {
+    if (document.documentElement.classList.contains('asw-stop-animations')) return true;
+    try {
+      var raw = localStorage.getItem('asw-user-settings');
+      if (raw) { var st = JSON.parse(raw).states; if (st && st['stop-animations']) return true; }
+    } catch (e) {}
+    return false;
+  }
 
   function build() {
     buildTimer = 0;
@@ -56,20 +71,15 @@
     rail.style.right = Math.round(gut - 2) + 'px';
 
     var fo = off(form);
-    if (!fo || w < 320) { rail.style.display = frame.style.display = 'none'; built = true; return; }
-    rail.style.display = frame.style.display = '';
-    var m = 14, rad = 26;
-    var lw = form.offsetWidth + 2 * m, lh = form.offsetHeight + 2 * m;
-    frame.style.left = (fo.x - m) + 'px'; frame.style.top = (fo.y - m) + 'px';
-    frame.setAttribute('width', lw); frame.setAttribute('height', lh); frame.setAttribute('viewBox', '0 0 ' + lw + ' ' + lh);
-    framePath.setAttribute('d',
-      'M ' + (lw - rad) + ' 0 H ' + rad + ' A ' + rad + ' ' + rad + ' 0 0 0 0 ' + rad +
-      ' V ' + (lh - rad) + ' A ' + rad + ' ' + rad + ' 0 0 0 ' + rad + ' ' + lh +
-      ' H ' + (lw - rad) + ' A ' + rad + ' ' + rad + ' 0 0 0 ' + lw + ' ' + (lh - rad) +
-      ' V ' + rad + ' A ' + rad + ' ' + rad + ' 0 0 0 ' + (lw - rad) + ' 0 Z');
-    frameLen = 2 * (lw + lh) - (8 - 2 * Math.PI) * rad;
-    framePath.style.strokeDasharray = frameLen;
-    frameTop = fo.y - m; frameH = lh; lastW = w;
+    if (!fo || w < 320) { rail.style.display = halo.style.display = 'none'; built = true; return; }
+    rail.style.display = halo.style.display = '';
+    var m = 14;
+    halo.style.left = (fo.x - m) + 'px';
+    halo.style.top = (fo.y - m) + 'px';
+    halo.style.width = (form.offsetWidth + 2 * m) + 'px';
+    halo.style.height = (form.offsetHeight + 2 * m) + 'px';
+    halo.style.borderRadius = (20 + m) + 'px ' + (20 + m) + 'px ' + (20 + m) + 'px ' + (4 + m) + 'px'; /* כמו הכרטיס: 20px 20px 20px 4px */
+    haloTop = fo.y - m; haloH = form.offsetHeight + 2 * m; lastW = w;
     built = true; lastT = null; lastO = lastF = -1;
     update();
   }
@@ -81,20 +91,23 @@
     if (!built) { build(); return; }
     var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
     var vh = window.innerHeight;
-    var formPage = main.getBoundingClientRect().top + sy + frameTop;
-    var fp = reduced ? 1 : clamp((sy + vh * 0.85 - formPage) / (frameH * 0.7 + vh * 0.05));   /* המסגרת נמשכת בקצב הגלילה */
-    var p = clamp(sy / Math.max(1, formPage - vh * 0.85));                                    /* ההתקדמות של הפס לאורך העמוד */
-    var headY = hb + (vh * 0.72 - hb) * p;
+    var still = reduced || stopped;
+    var docH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+    var formPage = main.getBoundingClientRect().top + sy + haloTop;
+    var fp = still ? 1 : clamp((sy + vh * 0.85 - formPage) / (haloH * 0.7 + vh * 0.05));   /* ההילה נוצרת בקצב הגלילה */
+    var p = clamp(sy / Math.max(1, docH - vh));                                            /* ההתקדמות של הפס עד סוף העמוד */
+    var headY = hb + (vh * 0.8 - hb) * p;
     var t = Math.round(headY - hb - TAIL);
     if (t !== lastT) { lastT = t; comet.style.transform = 'translate3d(0,' + t + 'px,0)'; }
-    var o = reduced ? 0 : Math.round(clamp(sy / (vh * 0.15)) * (1 - clamp(fp * 10)) * 20);
+    var o = still ? 0 : Math.round(clamp(sy / (vh * 0.15)) * 20);
     if (o !== lastO) { lastO = o; rail.style.opacity = o / 20; }
-    var f = Math.round(fp * 400);
-    if (f !== lastF) { lastF = f; framePath.style.strokeDashoffset = frameLen * (1 - f / 400); frame.style.visibility = f ? 'visible' : 'hidden'; }
+    var f = Math.round(fp * 100);
+    if (f !== lastF) { lastF = f; halo.style.opacity = f / 100; }
   }
 
   function onScroll() { if (!raf) raf = requestAnimationFrame(update); }
   function scheduleBuild(ms) { if (buildTimer) clearTimeout(buildTimer); buildTimer = setTimeout(function () { requestAnimationFrame(build); }, ms || 120); }
+  function onStopChange() { var s = readStopped(); if (s !== stopped) { stopped = s; lastT = null; lastO = lastF = -1; update(); } }
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', function () { scheduleBuild(200); });
@@ -108,6 +121,11 @@
     }).observe(main);
   }
   if (mq && mq.addEventListener) mq.addEventListener('change', function () { reduced = mq.matches; lastT = null; lastO = lastF = -1; update(); });
+
+  /* חיבור לכפתור "עצירת אנימציות": מעקב אחרי המחלקה ב־<html> (שינוי באותו טאב) ואירוע storage (טאב אחר) */
+  stopped = readStopped();
+  if (window.MutationObserver) new MutationObserver(onStopChange).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('storage', function (e) { if (!e.key || e.key === 'asw-user-settings') onStopChange(); });
 
   /* בנייה ראשונה אחרי הטעינה, בזמן פנוי; גלילה לפני כן בונה מיד */
   function init() { if ('requestIdleCallback' in window) requestIdleCallback(build, { timeout: 800 }); else setTimeout(build, 200); }

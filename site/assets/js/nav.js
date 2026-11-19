@@ -90,23 +90,33 @@
   const themeBtn = $('.theme-toggle');
   if (themeBtn) {
     const themeMeta = doc.querySelector('meta[name="theme-color"]');
-    const syncThemeToggle = () => {
-      const dark = doc.documentElement.getAttribute('data-theme') === 'dark';
+    const applyThemeAttr = (t) => {
+      doc.documentElement.setAttribute('data-theme', t);
+      if (themeMeta) themeMeta.setAttribute('content', t === 'dark' ? '#0C1F22' : '#14393D');
+    };
+    const setToggleState = (dark) => {
       themeBtn.setAttribute('aria-pressed', String(dark));
       themeBtn.setAttribute('aria-label', dark ? 'מעבר למצב בהיר' : 'מעבר למצב כהה');
-      if (themeMeta) themeMeta.setAttribute('content', dark ? '#0C1F22' : '#14393D');
     };
-    syncThemeToggle();
+    setToggleState(doc.documentElement.getAttribute('data-theme') === 'dark');
     themeBtn.addEventListener('click', () => {
       const dark = doc.documentElement.getAttribute('data-theme') === 'dark';
       const next = dark ? 'light' : 'dark';
       try { localStorage.setItem('rl-theme', next); } catch (_) {}
-      if (!reduce) {
-        doc.documentElement.classList.add('theming');
-        setTimeout(() => doc.documentElement.classList.remove('theming'), 460);
-      }
-      doc.documentElement.setAttribute('data-theme', next);
-      syncThemeToggle();
+      setToggleState(next === 'dark'); // האייקון מתחלף מיד באנימציה משלו
+      const old = $('.theme-veil');
+      if (old) old.remove();
+      if (reduce || !doc.body) { applyThemeAttr(next); return; }
+      /* צעיף אטום בצבע הרקע של היעד: נכנס, ההחלפה מתבצעת מתחתיו, ודוהה החוצה.
+         בלי מעבר-צבעים הדרגתי — אין פריים עם חזית/רקע בלתי קריאים */
+      setTimeout(() => {
+        const veil = el('div', { class: 'theme-veil', 'aria-hidden': 'true' });
+        veil.style.background = next === 'dark' ? '#0C1F22' : '#F2F5F3';
+        doc.body.appendChild(veil);
+        requestAnimationFrame(() => veil.classList.add('in'));
+        setTimeout(() => { applyThemeAttr(next); veil.classList.remove('in'); veil.classList.add('out'); }, 190);
+        setTimeout(() => veil.remove(), 560);
+      }, 120);
     });
   }
 })();

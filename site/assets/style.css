@@ -1587,12 +1587,13 @@ html[data-theme="dark"] .brand-img.logo-dark { display: block; }
 .theme-toggle:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .theme-toggle svg { position: absolute; inset: 0; margin: auto; transition: transform .55s cubic-bezier(0.25, 1, 0.5, 1), opacity .3s ease; }
 .theme-toggle .tt-moon { transform: rotate(-120deg) scale(0.3); opacity: 0; }
-html[data-theme="dark"] .theme-toggle .tt-sun { transform: rotate(120deg) scale(0.3); opacity: 0; }
-html[data-theme="dark"] .theme-toggle .tt-moon { transform: none; opacity: 1; }
+.theme-toggle[aria-pressed="true"] .tt-sun { transform: rotate(120deg) scale(0.3); opacity: 0; }
+.theme-toggle[aria-pressed="true"] .tt-moon { transform: none; opacity: 1; }
 html.asw-stop-animations .theme-toggle svg { transition: none; }
 
-/* מעבר צבעים אלגנטי בין הערכות: המחלקה מופעלת רק ברגע ההחלפה ומוסרת לאחר ~460ms */
-html.theming, html.theming *, html.theming *::before, html.theming *::after {
-  transition: background-color .38s ease, color .38s ease, border-color .38s ease,
-              box-shadow .38s ease, fill .38s ease, stroke .38s ease, filter .38s ease !important;
-}
+/* מעבר בין ערכות: צעיף אטום בצבע הרקע של היעד מכסה את המסך, ההחלפה מתבצעת מתחתיו,
+   והוא דוהה החוצה — כך חזית ורקע נשארים קריאים יחד בכל פריים (אין מעבר-צבעים הדרגתי) */
+.theme-veil { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; opacity: 0; transition: opacity .18s ease-in; }
+.theme-veil.in { opacity: 1; }
+.theme-veil.out { opacity: 0; transition: opacity .32s ease-out; }
+html.asw-stop-animations .theme-veil { display: none; }

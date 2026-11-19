@@ -111,7 +111,7 @@
      בהפחתת תנועה או "עצירת אנימציות" נשארת תמיד בתוך המסגרת (1) בלי תנועה. */
   function updatePortrait(sy, still) {
     if (!portraitImg) return;
-    var r = Math.round((still ? 1 : clamp(sy / 320)) * 100);
+    var r = Math.round((still ? 1 : clamp(sy / 220)) * 100);
     if (r !== lastPP) { lastPP = r; portraitImg.style.setProperty('--pp', String(r / 100)); }
   }
 

@@ -1584,7 +1584,11 @@ html[data-theme="dark"] .brand-img.logo-dark { display: block; }
   display: inline-flex; align-items: center; justify-content: center;
   transition: background-color .2s;
 }
-.theme-toggle:hover { background: var(--soft); }
+/* רקע ריחוף רק במכשירים עם עכבר אמיתי; במגע, hover "נדבק" אחרי טאפ וצובע את הכפתור */
+@media (hover: hover) {
+  .theme-toggle:hover { background: var(--soft); }
+}
+.theme-toggle { -webkit-tap-highlight-color: transparent; }
 .theme-toggle:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .theme-toggle svg { position: absolute; inset: 0; margin: auto; transition: transform .55s cubic-bezier(0.25, 1, 0.5, 1), opacity .3s ease; }
 .theme-toggle .tt-moon { transform: rotate(-120deg) scale(0.3); opacity: 0; }

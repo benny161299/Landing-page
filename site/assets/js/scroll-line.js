@@ -112,7 +112,13 @@
   function updatePortrait(sy, still) {
     if (!portraitImg) return;
     var r = Math.round((still ? 1 : clamp(sy / 220)) * 100);
-    if (r !== lastPP) { lastPP = r; portraitImg.style.setProperty('--pp', String(r / 100)); }
+    if (r !== lastPP) {
+      lastPP = r;
+      portraitImg.style.setProperty('--pp', String(r / 100));
+      /* הילת זהב על המסגרת כשהתמונה משלימה את הכניסה (וכיבוי בגלילה חזרה) */
+      var frame = portraitImg.parentNode;
+      if (frame && frame.classList) frame.classList.toggle('in-frame', r === 100);
+    }
   }
 
   function onScroll() { if (!raf) raf = requestAnimationFrame(update); }

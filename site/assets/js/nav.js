@@ -103,21 +103,10 @@
       const dark = doc.documentElement.getAttribute('data-theme') === 'dark';
       const next = dark ? 'light' : 'dark';
       try { localStorage.setItem('rl-theme', next); } catch (_) {}
-      setToggleState(next === 'dark'); // האייקון מתחלף מיד באנימציה משלו
-      const old = $('.theme-veil');
-      if (old) old.remove();
-      const stillNow = reduce || Boolean(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-      if (stillNow || !doc.body) { applyThemeAttr(next); return; }
-      /* צעיף אטום בצבע הרקע של היעד: נכנס, ההחלפה מתבצעת מתחתיו, ודוהה החוצה.
-         בלי מעבר-צבעים הדרגתי — אין פריים עם חזית/רקע בלתי קריאים */
-      setTimeout(() => {
-        const veil = el('div', { class: 'theme-veil', 'aria-hidden': 'true' });
-        veil.style.background = next === 'dark' ? '#0C1F22' : '#F2F5F3';
-        doc.body.appendChild(veil);
-        requestAnimationFrame(() => veil.classList.add('in'));
-        setTimeout(() => { applyThemeAttr(next); veil.classList.remove('in'); veil.classList.add('out'); }, 190);
-        setTimeout(() => veil.remove(), 560);
-      }, 120);
+      /* החלפה מיידית: שני המצבים קריאים ואין פריימי ביניים; האלגנטיות באנימציית
+         האייקון (מונעת מ-aria-pressed) שנשארת גלויה ללא כיסוי המסך */
+      setToggleState(next === 'dark');
+      applyThemeAttr(next);
     });
   }
 })();

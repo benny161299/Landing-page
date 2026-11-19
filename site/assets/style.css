@@ -173,7 +173,8 @@ p { margin: 0; }
   transition: transform .45s cubic-bezier(0.25, 1, 0.5, 1),
               box-shadow .45s ease;
 }
-.portrait:hover::before {
+.portrait:hover::before,
+.portrait.in-frame::before {
   z-index: 2;
   border-color: var(--brass-fill, #D1A862);
   box-shadow: 0 0 25px rgba(209, 168, 98, 0.45);
@@ -1578,12 +1579,12 @@ html[data-theme="dark"] .brand-img.logo-light { display: none; }
 html[data-theme="dark"] .brand-img.logo-dark { display: block; }
 .theme-toggle {
   position: relative; flex: none; width: 44px; height: 44px; padding: 0;
-  border-radius: 50%; border: 1.5px solid var(--field-line);
+  border-radius: 50%; border: 0;
   background: transparent; color: var(--ink); cursor: pointer;
   display: inline-flex; align-items: center; justify-content: center;
-  transition: border-color .2s, background-color .2s;
+  transition: background-color .2s;
 }
-.theme-toggle:hover { background: var(--soft); border-color: var(--ink); }
+.theme-toggle:hover { background: var(--soft); }
 .theme-toggle:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .theme-toggle svg { position: absolute; inset: 0; margin: auto; transition: transform .55s cubic-bezier(0.25, 1, 0.5, 1), opacity .3s ease; }
 .theme-toggle .tt-moon { transform: rotate(-120deg) scale(0.3); opacity: 0; }
@@ -1591,9 +1592,3 @@ html[data-theme="dark"] .brand-img.logo-dark { display: block; }
 .theme-toggle[aria-pressed="true"] .tt-moon { transform: none; opacity: 1; }
 html.asw-stop-animations .theme-toggle svg { transition: none; }
 
-/* מעבר בין ערכות: צעיף אטום בצבע הרקע של היעד מכסה את המסך, ההחלפה מתבצעת מתחתיו,
-   והוא דוהה החוצה — כך חזית ורקע נשארים קריאים יחד בכל פריים (אין מעבר-צבעים הדרגתי) */
-.theme-veil { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; opacity: 0; transition: opacity .18s ease-in; }
-.theme-veil.in { opacity: 1; }
-.theme-veil.out { opacity: 0; transition: opacity .32s ease-out; }
-html.asw-stop-animations .theme-veil { display: none; }

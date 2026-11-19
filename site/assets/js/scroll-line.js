@@ -20,7 +20,7 @@
     'background:linear-gradient(to bottom,rgba(209,168,98,0),rgba(209,168,98,.55) 70%,#D1A862)}' +
     '.sl-halo{position:absolute;pointer-events:none;z-index:5;opacity:0}' +
     '.sl-halo-glow{position:absolute;inset:0;border-radius:inherit;' +
-    'box-shadow:0 0 24px 6px rgba(209,168,98,.55),0 0 70px 22px rgba(209,168,98,.22);' +
+    'box-shadow:0 0 18px 4px rgba(209,168,98,.55),0 0 44px 12px rgba(209,168,98,.22);' +
     'animation:sl-halo-pulse 3.4s ease-in-out infinite alternate}' +
     '@keyframes sl-halo-pulse{from{opacity:.72}to{opacity:1}}' +
     '.marquee{position:relative;z-index:6}' +
@@ -74,7 +74,7 @@
     var fo = off(form);
     if (!fo || w < 320) { rail.style.display = halo.style.display = 'none'; built = true; return; }
     rail.style.display = halo.style.display = '';
-    var m = 14;
+    var m = 0; /* ההילה צמודה למסגרת הכרטיס עצמו (המסגרת הפנימית), בלי מסגרת חיצונית מרוחקת */
     halo.style.left = (fo.x - m) + 'px';
     halo.style.top = (fo.y - m) + 'px';
     halo.style.width = (form.offsetWidth + 2 * m) + 'px';

@@ -11,6 +11,10 @@ License version 2 (GPL-2.0). The full license text follows below.
 Project and source code (FontForge sources):
 https://github.com/Culmus/hebrew-fonts
 
+The corresponding FontForge sources of these exact files are also hosted
+alongside them in the source/ directory (Ellinia-Light.sfd, Ellinia-Bold.sfd),
+taken unmodified from the upstream repository above.
+
 Note: unlike some other Culmus fonts (Simple, Shofar, Keter YG, Hadasim),
 Ellinia CLM is NOT covered by the GPL font exception; it is plain GPL-2.0.
 

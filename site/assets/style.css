@@ -1,3 +1,20 @@
+/* Ellinia CLM (כותרות) - גופן עברי חופשי מפרויקט Culmus, GPL-2.0.
+   קבצים ללא שינוי, רישיון ומקור: /assets/fonts/LICENSE-ElliniaCLM.txt */
+@font-face {
+  font-family: "Ellinia CLM";
+  src: url("/assets/fonts/ElliniaCLM-Light.otf") format("opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Ellinia CLM";
+  src: url("/assets/fonts/ElliniaCLM-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg: #F2F5F3;
   --surface: #FFFFFF;
@@ -18,7 +35,7 @@
   --foot: #0E2427;
   --focus: #1F6F78;
 
-  --serif: "Noto Serif Hebrew", "Frank Ruhl Libre", "David", "Times New Roman", serif;
+  --serif: "Ellinia CLM", "Noto Serif Hebrew", "Frank Ruhl Libre", "David", "Times New Roman", serif;
   --sans: "Noto Sans Hebrew", "Assistant", "Segoe UI", Tahoma, Arial, sans-serif;
 
   box-sizing: border-box;
@@ -72,6 +89,8 @@ body::before {
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 h1, h2, h3 { font-family: var(--serif); font-weight: 700; margin: 0; line-height: 1.2; }
+/* כותרות תצוגה גדולות במשקל דק של Ellinia; טקסט serif קטן נשאר במשקל מודגש */
+.hero h1, .phead h1, .sec-h, .quote, .steps .n, .direct a.tel, .out .v { font-weight: 300; }
 p { margin: 0; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 [hidden] { display: none !important; }

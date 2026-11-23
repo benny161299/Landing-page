@@ -12,6 +12,13 @@
     doc.body.appendChild(tooltipEl);
 
     function updateSiennaFeatures() {
+      const opener = doc.querySelector('.asw-menu-btn');
+      if (opener) {
+        opener.setAttribute('aria-label', 'תפריט נגישות ועצירת אנימציות');
+        opener.setAttribute('title', 'תפריט נגישות ועצירת אנימציות');
+      }
+      const motion = doc.querySelector('[data-key="stop-animations"]');
+      if (motion) motion.setAttribute('aria-label', 'עצירת אנימציות');
       const hideBtn = doc.querySelector('[data-key="hide-images"]');
       let isHide = hideBtn ? hideBtn.classList.contains('asw-selected') : false;
 

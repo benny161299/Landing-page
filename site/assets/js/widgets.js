@@ -508,24 +508,6 @@
     }
   };
 
-  function initMarqueeControls() {
-    doc.querySelectorAll('.marquee').forEach((strip, i) => {
-      if (!strip.id) strip.id = 'motion-strip-' + (i + 1);
-      const button = el('button', { type: 'button', class: 'marquee-motion-control', 'aria-pressed': 'false', 'aria-controls': strip.id, text: 'השהיית תנועה' });
-      // The control shares the strip's responsive display, but is outside its clipped area.
-      const wrapper = el('div', { class: 'marquee-control-wrap' });
-      if (strip.classList.contains('marquee-single')) wrapper.classList.add('marquee-control-single');
-      strip.parentNode.insertBefore(wrapper, strip);
-      wrapper.appendChild(button);
-      button.addEventListener('click', () => {
-        const paused = strip.classList.toggle('is-paused');
-        button.setAttribute('aria-pressed', String(paused));
-        button.textContent = paused ? 'הפעלת תנועה' : 'השהיית תנועה';
-      });
-    });
-  }
-  initMarqueeControls();
-
   if (doc.readyState === 'loading') {
     doc.addEventListener('DOMContentLoaded', initMobileQuickContact);
   } else {

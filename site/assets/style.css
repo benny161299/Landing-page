@@ -1616,12 +1616,7 @@ html.asw-stop-animations .theme-toggle svg { transition: none; }
 .band :focus-visible, .foot :focus-visible { outline-color: var(--brass-fill); }
 .qc-btn-wa .qc-btn-icon { color: #10221F; }
 [data-theme="dark"] .rev-stars { color: var(--brass-fill); }
-.marquee-motion-control { display: block; margin: 12px auto; font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--field-line); border-radius: 8px; padding: 6px 14px; cursor: pointer; }
-.marquee.is-paused .marquee-track { animation-play-state: paused; }
 html.asw-stop-animations *, html.asw-stop-animations *::before, html.asw-stop-animations *::after { animation-play-state: paused !important; transition: none !important; scroll-behavior: auto !important; }
 .portrait img:not(.portrait-motion-ready) { transition: none; }
 .qc-hide-btn { font: inherit; padding: 8px; background: var(--surface); color: var(--ink); border: 1px solid var(--field-line); border-radius: 8px; cursor: pointer; }
 html[data-asw-dismissed="true"] .asw-widget, html[data-asw-dismissed="true"] .asw-menu-btn, html[data-asw-dismissed="true"] #asw-menu-btn { display: block !important; }
-
-@media (max-width: 768px) { .marquee-control-single { display: none; } }
-@media (prefers-reduced-motion: reduce) { .marquee-control-wrap { display: none; } }

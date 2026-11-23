@@ -277,7 +277,7 @@
         { label: 'פטורה ממס', v: recog + exempt, color: C2, dash: true },
         { label: 'חייבת במס', v: taxable, color: C1 }
       ]);
-      return 'פטור חודשי משוער: ' + ils(exempt) + '. חייב במס: ' + ils(taxable) + '. קצבה מוכרת פטורה: ' + ils(v.recog) + '. ' + t;
+      return 'פטור חודשי משוער: ' + ils(exempt) + '. חייב במס: ' + ils(taxable) + '. קצבה מוכרת פטורה: ' + ils(recog) + '. ' + t;
     }
   };
 

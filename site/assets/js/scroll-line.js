@@ -90,7 +90,7 @@
   function update() {
     raf = 0;
     if (!built) { build(); return; }
-    var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var sy = window.scrollY || document.documentElement.scrollTop || 0;
     var vh = window.innerHeight;
     var still = reduced || stopped;
     var docH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
@@ -115,6 +115,10 @@
     if (r !== lastPP) {
       lastPP = r;
       portraitImg.style.setProperty('--pp', String(r / 100));
+      if (!portraitImg.classList.contains('portrait-motion-ready')) {
+        void portraitImg.offsetWidth;
+        requestAnimationFrame(function () { portraitImg.classList.add('portrait-motion-ready'); });
+      }
       /* הילת זהב על המסגרת כשהתמונה משלימה את הכניסה (וכיבוי בגלילה חזרה) */
       var frame = portraitImg.parentNode;
       if (frame && frame.classList) frame.classList.toggle('in-frame', r === 100);
@@ -140,7 +144,7 @@
 
   /* חיבור לכפתור "עצירת אנימציות": מעקב אחרי המחלקה ב־<html> (שינוי באותו טאב) ואירוע storage (טאב אחר) */
   stopped = readStopped();
-  updatePortrait(window.pageYOffset || document.documentElement.scrollTop || 0, reduced || stopped);
+  updatePortrait(window.scrollY || document.documentElement.scrollTop || 0, reduced || stopped);
   if (window.MutationObserver) new MutationObserver(onStopChange).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
   window.addEventListener('storage', function (e) { if (!e.key || e.key === 'asw-user-settings') onStopChange(); });
 

@@ -108,7 +108,11 @@
   var X_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 
   function showBanner(withdraw) {
-    if (document.getElementById('cookie-banner') || !document.body) return;
+    if (!document.body) return;
+    if (document.getElementById('cookie-banner')) {
+      if (!withdraw) return;
+      removeBanner();
+    }
     var b = document.createElement('div');
     b.id = 'cookie-banner';
     b.setAttribute('role', 'region');
@@ -130,6 +134,8 @@
   /* פתיחה מחדש של הבאנר מ"הגדרות עוגיות" בפוטר */
   window.rlCookieSettings = function () {
     showBanner(true);
+    var choice = document.querySelector('#cookie-banner .cb-reject');
+    if (choice) choice.focus();
   };
 
   function init() {

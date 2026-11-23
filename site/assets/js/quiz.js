@@ -3,6 +3,8 @@
   'use strict';
   const { doc, $, $$, el, WA } = window.RL;
 
+  doc.querySelectorAll('.q-form').forEach((form) => form.addEventListener('submit', (e) => e.preventDefault()));
+
   const R = {
     self: { t: 'פנסיה וביטוח לעצמאים', u: '/self-employed/', p: 'כעצמאים אין מעסיק שמפריש בשבילכם, ולכן כדאי להתחיל בבדיקה של מה מופקד היום ומה נשאר בלי כיסוי. אפשר לקבל תמונה ראשונית גם בכלי החישוב.', also: [['מחשבון פער פנסיוני', '/tools/self-employed-pension/'], ['קרן השתלמות', '/study-fund/']] },
     retire: { t: 'הכנה לפרישה', u: '/retirement-planning/', p: 'ככל שהפרישה קרובה, חשוב להבין כמה נצבר, מה צפוי לקבל כל חודש ואיך המסלולים והכיסויים מתאימים לשלב הזה.', also: [['בדיקת פנסיה', '/pension/'], ['ביטוח בריאות', '/health-insurance/']] },
@@ -19,7 +21,7 @@
       el('a', {
         class: 'btn btn-primary',
         href: 'https://wa.me/' + WA + '?text=' + encodeURIComponent(waMsg),
-        target: '_blank',
+        'aria-label': 'פתיחת וואטסאפ (נפתח בחלון חדש)', target: '_blank',
         rel: 'noopener',
         text: 'שלחו לי את התשובות בוואטסאפ'
       }),

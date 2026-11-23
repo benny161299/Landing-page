@@ -12,11 +12,6 @@
     doc.body.appendChild(tooltipEl);
 
     function updateSiennaFeatures() {
-      let raw = '';
-      try { raw = localStorage.getItem('asw-user-settings') || ''; } catch (e) {}
-      let states = {};
-      try { if (raw) states = JSON.parse(raw).states || {}; } catch (e) {}
-
       const hideBtn = doc.querySelector('[data-key="hide-images"]');
       let isHide = hideBtn ? hideBtn.classList.contains('asw-selected') : false;
 
@@ -39,6 +34,7 @@
         const alt = (img.getAttribute('alt') || '').trim();
         tooltipEl.textContent = 'תיאור תמונה: ' + (alt || 'ללא תיאור טקסטואלי');
         tooltipEl.classList.add('is-visible');
+        tooltipEl.setAttribute('aria-hidden', 'false');
       }
     });
 
@@ -55,8 +51,23 @@
 
     doc.addEventListener('mouseout', (e) => {
       const img = e.target && e.target.closest ? e.target.closest('img:not(.asw-menu img):not(.asw-widget img)') : null;
-      if (img) tooltipEl.classList.remove('is-visible');
+      if (img && !tooltipEl.contains(e.relatedTarget)) hideTooltip();
     });
+
+    function hideTooltip() { tooltipEl.classList.remove('is-visible'); tooltipEl.setAttribute('aria-hidden', 'true'); }
+    doc.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideTooltip(); });
+    doc.addEventListener('focusin', (e) => {
+      if (!doc.documentElement.classList.contains('asw-image-tooltips')) return;
+      const img = e.target.matches('img') ? e.target : e.target.querySelector('img');
+      if (!img || img.closest('.asw-widget, .asw-menu')) return;
+      tooltipEl.textContent = 'תיאור תמונה: ' + (img.getAttribute('alt') || 'ללא תיאור טקסטואלי');
+      tooltipEl.classList.add('is-visible'); tooltipEl.setAttribute('aria-hidden', 'false');
+      const r = e.target.getBoundingClientRect();
+      tooltipEl.style.left = Math.max(10, Math.min(r.left, innerWidth - 330)) + 'px';
+      tooltipEl.style.top = Math.min(r.bottom + 10, innerHeight - 70) + 'px';
+    });
+    doc.addEventListener('focusout', hideTooltip);
+    tooltipEl.addEventListener('mouseleave', hideTooltip);
 
     // Run on startup
     updateSiennaFeatures();

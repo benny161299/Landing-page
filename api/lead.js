@@ -5,36 +5,45 @@
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ ok: false });
 
+  const body = req.body;
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return res.status(400).json({ ok: false, reason: 'invalid_input' });
+  // Drop bot submissions locally. Do not tell bots which field caught them.
+  if (String(body._honey || '').trim()) return res.status(200).json({ ok: true });
+  const name = String(body.fullname || '').trim();
+  const phone = String(body.phone || '').replace(/[\s\-().]/g, '');
+  if (!name || name.length > 120 || !/^(\+?972|0)\d{8,9}$/.test(phone)) {
+    return res.status(400).json({ ok: false, reason: 'invalid_input' });
+  }
+  const origin = req.headers && req.headers.origin;
+  const preview = process.env.VERCEL_ENV === 'preview';
+  const previewHost = process.env.VERCEL_URL;
+  const allowedOrigins = ['https://www.lasker-insurances.com', 'https://lasker-insurances.com'];
+  if (preview && previewHost) allowedOrigins.push('https://' + previewHost);
+  if (preview && process.env.VERCEL_BRANCH_URL) allowedOrigins.push('https://' + process.env.VERCEL_BRANCH_URL);
+  // Origin is defense in depth, not authentication or a distributed rate limiter.
+  if (origin && !allowedOrigins.includes(origin)) return res.status(403).json({ ok: false, reason: 'invalid_origin' });
+  // Branch previews never contact the live Apps Script, leads sheet or mailbox.
+  if (preview) return res.status(200).json({ ok: true, preview: true });
+
   const url = process.env.APPS_SCRIPT_URL;
   const token = process.env.LEAD_TOKEN;
   if (!url || !token) return res.status(500).json({ ok: false });
 
-  const body = req.body || {};
-
-  // בידוד תצוגות מקדימות (Preview): Vercel מציבה VERCEL_ENV=preview רק בדיפלויים של ברנצ'ים.
-  // שם הטופס עובר בדיקת קלט ומחזיר הצלחה בלי לפנות ל-Apps Script - בלי שורה בגיליון ובלי מייל לרחל,
-  // כדי שאפשר יהיה לבדוק מקצה לקצה (כולל אירוע GA) מבלי לגעת בנתונים החיים. בפרודקשן הזרימה ללא שינוי.
-  if (process.env.VERCEL_ENV === 'preview') {
-    const okName = String(body.fullname || '').trim().length > 0;
-    const okPhone = /^(\+?972|0)\d{8,9}$/.test(String(body.phone || '').replace(/[\s\-().]/g, ''));
-    if (!okName || !okPhone) return res.status(400).json({ ok: false, reason: 'invalid_input' });
-    return res.status(200).json({ ok: true, preview: true });
-  }
-
   const payload = JSON.stringify({
     token: token,
-    name: String(body.fullname || '').slice(0, 120),
-    phone: String(body.phone || '').slice(0, 30),
+    name: name,
+    phone: phone,
     topic: String(body.topic || '').slice(0, 120),
     website: String(body._honey || ''), // honeypot mirror - Apps Script re-checks
     request_id: String(body.request_id || '').slice(0, 64) // idempotency key per submission attempt
   });
 
+  let timer;
   try {
     // מסגרת הזמן חייבת לכסות ריצת Apps Script איטית (נמדדה ריצה של ~5 דקות בעומס גוגל).
     // 55 שניות + maxDuration 60 ב-vercel.json; מעבר לכך הלקוח מנסה שוב עם אותו request_id.
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 55000);
+    timer = setTimeout(() => controller.abort(), 55000);
 
     // Apps Script answers /exec with a 302 to script.googleusercontent.com.
     // Follow the 302 manually (see postFollowingRedirects).
@@ -53,6 +62,8 @@ export default async function handler(req, res) {
     // timeout (abort) או כשל רשת מול Apps Script: תוצאה לא ידועה - הריצה בגוגל עשויה להימשך ולהשלים.
     if (e && e.name === 'AbortError') return res.status(504).json({ ok: false, reason: 'timeout' });
     return res.status(502).json({ ok: false });
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 
@@ -70,7 +81,11 @@ async function postFollowingRedirects(url, payload, signal) {
   if (r.status >= 300 && r.status < 400) {
     const loc = r.headers.get('location');
     if (!loc) throw new Error('redirect without location');
-    return fetch(loc, { method: 'GET', redirect: 'follow', signal });
+    const target = new URL(loc, url);
+    if (target.protocol !== 'https:' || target.hostname !== 'script.googleusercontent.com' || target.port || target.username || target.password) {
+      throw new Error('unexpected Apps Script redirect');
+    }
+    return fetch(target.href, { method: 'GET', redirect: 'error', signal });
   }
   return r;
 }

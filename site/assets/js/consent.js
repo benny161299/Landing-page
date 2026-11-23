@@ -17,23 +17,19 @@
   if (mq && mq.addEventListener) mq.addEventListener('change', function () { if (!manual()) applyTheme(mq.matches ? 'dark' : 'light'); });
 })();
 
-/* consent.js — באנר הסכמה לעוגיות וטעינת Google Analytics רק לאחר אישור.
-   נטען בראש כל עמוד במקום קוד ה־GA הישיר:
-   - ללא בחירה: GA לא נטען כלל ומוצג באנר קטן בתחתית העמוד.
-   - כפתור יחיד "הבנתי": הלחיצה שומרת את הבחירה, GA נטען ומתחילה מדידה.
-   - ללא לחיצה: GA נשאר כבוי. ביטול מדידה אפשרי דרך "הגדרות עוגיות" בפוטר.
-   - שינוי דעה מאישור לדחייה: המדידה נעצרת מיד (גם אם GA כבר נטען),
-     עוגיות ה־_ga נמחקות, וההשבתה נשמרת לביקורים הבאים.
-   הבחירה נשמרת ב־localStorage ותקפה לכל עמודי האתר; ניתן לשנותה דרך "הגדרות עוגיות" בפוטר. */
+/* consent.js: מדידה מתחילה בטעינה באתר החי, אלא אם נשמר ביטול.
+   הודעת יידוע עם כפתור הבנתי; ניתן לבטל דרך הגדרות עוגיות.
+   תצוגות מקדימות ומארחים אחרים אינם פונים לנכס המדידה האמיתי. */
 (function () {
   'use strict';
 
   var GA_ID = 'G-MZVSVTV6XM';
   var STORAGE_KEY = 'rl-analytics-consent';
+  var IS_PRODUCTION_HOST = location.protocol === 'https:' &&
+    (location.hostname === 'www.lasker-insurances.com' || location.hostname === 'lasker-insurances.com');
   var DISABLE_KEY = 'ga-disable-' + GA_ID; // מנגנון ההשבתה הרשמי של GA
 
-  /* stub תמיד זמין כדי שקריאות gtag מהאתר לא ייכשלו; כל עוד אין אישור
-     הקריאות לא נשמרות ולא נשלחות לגוגל בשום צורה. */
+  /* אין אגירת אירועים בזמן ביטול או בתצוגה מקדימה. */
   window.dataLayer = window.dataLayer || [];
   function gtagOn() { window.dataLayer.push(arguments); }
   function gtagOff() { /* חסום: לא ניתנה הסכמה */ }
@@ -56,6 +52,7 @@
 
   /* הפעלת מדידה */
   function enableGA() {
+    if (!IS_PRODUCTION_HOST) { disableGA(); return; }
     window[DISABLE_KEY] = false;
     window.gtag = gtagOn;
     loadGA();
@@ -108,14 +105,18 @@
   var X_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
 
   function showBanner(withdraw) {
-    if (document.getElementById('cookie-banner') || !document.body) return;
+    if (!document.body) return;
+    if (document.getElementById('cookie-banner')) {
+      if (!withdraw) return;
+      removeBanner();
+    }
     var b = document.createElement('div');
     b.id = 'cookie-banner';
     b.setAttribute('role', 'region');
     b.setAttribute('aria-label', 'הודעה על שימוש בעוגיות');
     b.innerHTML =
       '<div class="cb-icon" aria-hidden="true">' + COOKIE_ICON + '</div>' +
-      '<p class="cb-text">האתר משתמש בעוגיות (<span class="ltr">Cookies</span>) למדידת תנועה באמצעות <span class="ltr">Google Analytics</span>. המדידה מתחילה בלחיצה על "הבנתי". פרטים ב<a href="/privacy-policy/">מדיניות הפרטיות</a>.</p>' +
+      '<p class="cb-text">האתר משתמש בעוגיות (<span class="ltr">Cookies</span>) למדידת תנועה באמצעות <span class="ltr">Google Analytics</span>. המשך הגלישה באתר מהווה הסכמה למדידה. פרטים ב<a href="/privacy-policy/">מדיניות הפרטיות</a>.</p>' +
       '<div class="cb-actions">' +
       '<button type="button" class="cb-btn cb-accept">' + CHECK_ICON + '<span>הבנתי</span></button>' +
       (withdraw ? '<button type="button" class="cb-btn cb-reject">' + X_ICON + '<span>ביטול מדידה</span></button>' : '') +
@@ -130,6 +131,8 @@
   /* פתיחה מחדש של הבאנר מ"הגדרות עוגיות" בפוטר */
   window.rlCookieSettings = function () {
     showBanner(true);
+    var choice = document.querySelector('#cookie-banner .cb-reject');
+    if (choice) choice.focus();
   };
 
   function init() {
@@ -139,8 +142,8 @@
   }
 
   /* ההחלטה על המדידה מתבצעת מיד, סינכרונית, עוד לפני שהעמוד נטען */
-  if (getChoice() === 'accepted') enableGA();
-  else disableGA();
+  if (getChoice() === 'rejected') disableGA();
+  else enableGA();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

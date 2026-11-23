@@ -89,7 +89,6 @@ for (const pagePath of walk(PAGES)) {
   const id = pageId(rel);
   let html = fs.readFileSync(pagePath, 'utf8');
 
-  const includes = html.match(/<!-- @include [\w/.-]+ -->/g) || [];
   html = html.replace(/^[ \t]*<!-- @include ([\w/.-]+) -->[ \t]*$/gm, (m, partial) => {
     const partialPath = path.join(SRC, partial);
     if (!fs.existsSync(partialPath)) throw new Error(`${rel}: partial not found: ${partial}`);

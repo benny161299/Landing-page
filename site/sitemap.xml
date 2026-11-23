@@ -1,14 +1,11 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- עמוד הבית -->
   <url>
     <loc>https://www.lasker-insurances.com/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- עמודי שירותים ומידע מרכזי -->
   <url>
     <loc>https://www.lasker-insurances.com/pension/</loc>
     <lastmod>2026-11-01</lastmod>
@@ -87,8 +84,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
-  <!-- כלים ומחשבונים -->
   <url>
     <loc>https://www.lasker-insurances.com/tools/</loc>
     <lastmod>2026-11-01</lastmod>
@@ -113,8 +108,6 @@
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
-
-  <!-- מגזין ומאמרים -->
   <url>
     <loc>https://www.lasker-insurances.com/blog/</loc>
     <lastmod>2026-11-01</lastmod>
@@ -129,6 +122,11 @@
   </url>
   <url>
     <loc>https://www.lasker-insurances.com/blog/find-lost-pension-money/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/pension-annuity-factor/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
@@ -142,8 +140,23 @@
   </url>
   <url>
     <loc>https://www.lasker-insurances.com/blog/study-fund-self-employed-tax/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/study-fund-tax-free-withdrawal/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/pension-disability-coverage/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/managers-insurance-vs-pension-fund/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
@@ -151,9 +164,29 @@
   </url>
   <url>
     <loc>https://www.lasker-insurances.com/blog/pension-actuarial-balance/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/severance-after-dismissal/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/double-health-insurance/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/halachic-tracks/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/agent-vs-marketer/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
@@ -179,13 +212,16 @@
   </url>
   <url>
     <loc>https://www.lasker-insurances.com/blog/pension-fees-comparison/</loc>
+    <lastmod>2026-11-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://www.lasker-insurances.com/blog/investment-gemel-tax-cap/</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-
-  <!-- דפים משפטיים -->
   <url>
     <loc>https://www.lasker-insurances.com/accessibility-statement/</loc>
     <lastmod>2026-10-29</lastmod>

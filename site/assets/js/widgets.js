@@ -2,7 +2,7 @@
    (טלפון + נגישות), וכלי שחזור. נטען בכל עמוד. */
 (function () {
   'use strict';
-  const { doc, el, svgEl } = window.RL;
+  const { doc, el, svgEl, WA } = window.RL;
 
   const PHONE_ICON_PATH = 'M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z';
   const CHAT_ICON_PATHS = [
@@ -66,13 +66,14 @@
         el('nav', { class: 'qc-menu', id: 'qc-menu', 'aria-label': 'אפשרויות יצירת קשר מהירה' }, [
           el('a', {
             class: 'qc-btn qc-btn-wa',
-            href: 'https://wa.me/972559535605?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A8%D7%97%D7%9C%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%99%D7%97%D7%94.',
+            'aria-label': 'הודעת וואטסאפ (נפתח בחלון חדש)',
+            href: 'https://wa.me/' + WA + '?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%A8%D7%97%D7%9C%2C%20%D7%94%D7%92%D7%A2%D7%AA%D7%99%20%D7%9E%D7%94%D7%90%D7%AA%D7%A8%20%D7%95%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%99%D7%97%D7%94.',
             target: '_blank', rel: 'noopener'
           }, [
             el('span', { class: 'qc-btn-text', text: 'הודעת וואטסאפ' }),
             el('span', { class: 'qc-btn-icon' }, [waIcon(22)])
           ]),
-          el('a', { class: 'qc-btn qc-btn-call', href: 'tel:+972559535605' }, [
+          el('a', { class: 'qc-btn qc-btn-call', href: 'tel:+' + WA }, [
             el('span', { class: 'qc-btn-text', text: 'חייג עכשיו' }),
             el('span', { class: 'qc-btn-icon' }, [phoneIcon('', 22)])
           ]),
@@ -89,10 +90,24 @@
     const trigger = doc.getElementById('qc-trigger');
     const backdrop = existing.querySelector('.qc-backdrop');
     const formBtn = doc.getElementById('qc-btn-scroll-form');
+    const menu = existing.querySelector('.qc-menu');
+    const hideBtn = el('button', { type: 'button', class: 'qc-hide-btn', text: 'הסתרת כפתור הקשר' });
+    if (menu) { menu.inert = true; menu.appendChild(hideBtn); }
+    hideBtn.addEventListener('click', () => {
+      toggleMenu(false);
+      try { localStorage.setItem('qc_phone_widget_dismissed', 'true'); } catch (_) {}
+      existing.style.setProperty('display', 'none', 'important');
+      doc.documentElement.setAttribute('data-qc-dismissed', 'true');
+      const restore = doc.getElementById('restore-floating-widgets');
+      if (restore) { restore.focus(); restore.scrollIntoView({ block: 'center', behavior: 'auto' }); }
+    });
+    const restoreBtn = doc.getElementById('restore-floating-widgets');
+    if (restoreBtn) restoreBtn.addEventListener('click', () => { resetFloatingWidgets(); if (trigger) trigger.focus(); });
 
     function toggleMenu(forceOpen) {
       const isOpen = typeof forceOpen === 'boolean' ? forceOpen : !existing.classList.contains('is-open');
       existing.classList.toggle('is-open', isOpen);
+      if (menu) menu.inert = !isOpen;
       if (backdrop) backdrop.classList.toggle('is-open', isOpen);
       if (trigger) {
         trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
@@ -471,56 +486,13 @@
 
   /* ---------- Bind Sienna Accessibility Button ---------- */
   function bindSiennaAccessibilityDragDismiss() {
-    const STORAGE_KEY = 'asw_accessibility_widget_dismissed';
-
-    function tryBind() {
-      const aswBtn = doc.querySelector('.asw-menu-btn') || doc.querySelector('#asw-menu-btn') || doc.querySelector('.asw-widget button');
-      if (!aswBtn) return false;
-
-      const aswContainer = aswBtn.closest('.asw-widget') || aswBtn;
-
-      try {
-        if (localStorage.getItem(STORAGE_KEY) === 'true') {
-          aswContainer.style.setProperty('display', 'none', 'important');
-          doc.documentElement.setAttribute('data-asw-dismissed', 'true');
-        }
-      } catch (_) {}
-
-      makeDraggableAndDismissible({
-        triggerElement: aswBtn,
-        containerToDismiss: aswContainer,
-        storageKey: STORAGE_KEY,
-        removedText: 'כפתור הנגישות הוסר מהמסך',
-        onBeforeDismiss() {
-          const closeBtn = doc.querySelector('.asw-menu-close') || doc.querySelector('.asw-menu .close');
-          if (closeBtn) closeBtn.click();
-        }
-      });
-      return true;
-    }
-
-    if (!tryBind()) {
-      let attempts = 0;
-      const interval = setInterval(() => {
-        attempts++;
-        if (tryBind() || attempts > 25) {
-          clearInterval(interval);
-        }
-      }, 250);
-
-      if (window.MutationObserver) {
-        const observer = new MutationObserver(() => {
-          if (tryBind()) {
-            observer.disconnect();
-          }
-        });
-        observer.observe(doc.body || doc.documentElement, { childList: true, subtree: true });
-      }
-    }
+    // Accessibility must remain recoverable, including after an old saved dismissal.
+    try { localStorage.removeItem('asw_accessibility_widget_dismissed'); } catch (_) {}
+    doc.documentElement.removeAttribute('data-asw-dismissed');
   }
 
-  // Global reset helper for testing or recovery
-  window.resetFloatingWidgets = function () {
+  // Public recovery is offered through the persistent footer control.
+  function resetFloatingWidgets() {
     try {
       localStorage.removeItem('qc_phone_widget_dismissed');
       localStorage.removeItem('asw_accessibility_widget_dismissed');

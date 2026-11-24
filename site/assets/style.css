@@ -1605,11 +1605,26 @@ html[data-theme="dark"] .brand-img.logo-dark { display: block; }
 /* בלי רקע בכל מצב (גם ריחוף) — הכפתור תמיד בגוון ההאדר; טבעת המיקוד למקלדת נשארת */
 .theme-toggle { -webkit-tap-highlight-color: transparent; }
 .theme-toggle:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.theme-toggle svg { position: absolute; inset: 0; margin: auto; transition: transform .55s cubic-bezier(0.25, 1, 0.5, 1), opacity .3s ease; }
-.theme-toggle .tt-moon { transform: rotate(-120deg) scale(0.3); opacity: 0; }
-.theme-toggle[aria-pressed="true"] .tt-sun { transform: rotate(120deg) scale(0.3); opacity: 0; }
-.theme-toggle[aria-pressed="true"] .tt-moon { transform: none; opacity: 1; }
-html.asw-stop-animations .theme-toggle svg { transition: none; }
+/* מתג שמש/ירח (דוגמת Uiverse, Type-Delta, MIT): CSS בלבד, מונע מ-aria-pressed */
+.theme-toggle .tt-icon { position: absolute; inset: 0; margin: auto; transition: transform .4s ease; transform: rotate(40deg); }
+.theme-toggle .sunMoon { transform-origin: center center; transition: inherit; transform: scale(1); }
+.theme-toggle .sunRay { transform-origin: center center; transform: scale(0); }
+.theme-toggle .tt-icon mask > circle { transition: transform .64s cubic-bezier(0.41, 0.64, 0.32, 1.575); transform: translate(0px, 0px); }
+.theme-toggle .sunRay2 { animation-delay: .05s !important; }
+.theme-toggle .sunRay3 { animation-delay: .1s !important; }
+.theme-toggle .sunRay4 { animation-delay: .17s !important; }
+.theme-toggle .sunRay5 { animation-delay: .29s !important; }
+.theme-toggle[aria-pressed="true"] .tt-icon { transform: rotate(90deg); }
+.theme-toggle[aria-pressed="true"] .tt-icon mask > circle { transform: translate(16px, -3px); }
+.theme-toggle[aria-pressed="true"] .sunMoon { transform: scale(0.55); }
+.theme-toggle[aria-pressed="true"] .sunRay { animation: showRay1832 .4s ease 0s 1 forwards; }
+@keyframes showRay1832 { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle .tt-icon, .theme-toggle .sunMoon, .theme-toggle .tt-icon mask > circle { transition: none; }
+  .theme-toggle[aria-pressed="true"] .sunRay { animation: none; transform: scale(1); }
+}
+html.asw-stop-animations .theme-toggle .tt-icon, html.asw-stop-animations .theme-toggle .sunMoon, html.asw-stop-animations .theme-toggle .tt-icon mask > circle { transition: none; }
+html.asw-stop-animations .theme-toggle[aria-pressed="true"] .sunRay { animation: none; transform: scale(1); }
 
 
 /* Review fixes: visible controls, keyboard contrast and complete motion stop. */

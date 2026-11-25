@@ -43,7 +43,7 @@
   if (getComputedStyle(main).position === 'static') main.style.position = 'relative';
   main.insertBefore(halo, main.firstChild);
 
-  var built = false, hb = 0, haloTop = 0, haloH = 0;
+  var desktop = false, built = false, hb = 0, haloTop = 0, haloH = 0;
   var lastT = null, lastO = -1, lastF = -1, raf = 0, buildTimer = 0, lastW = 0;
   var portraitImg = main.querySelector('.portrait img'), lastPP = -1;
 
@@ -68,12 +68,14 @@
     var wrap = main.querySelector('.wrap');
     var pad = wrap ? Math.max(0, wrap.getBoundingClientRect().left + parseFloat(getComputedStyle(wrap).paddingLeft)) : 20;
     var gut = Math.max(7, Math.min(44, pad * 0.5));
+    /* במחשב (רוחב מעל 860px) הפס האנכי לא מוצג; ההילה סביב הטופס נשארת. במובייל הפס פעיל */
+    desktop = !!(window.matchMedia && window.matchMedia('(min-width: 861px)').matches);
     rail.style.top = hb + 'px';
     rail.style.right = Math.round(gut - 2) + 'px';
 
     var fo = off(form);
     if (!fo || w < 320) { rail.style.display = halo.style.display = 'none'; built = true; return; }
-    rail.style.display = halo.style.display = '';
+    halo.style.display = ''; rail.style.display = desktop ? 'none' : '';
     var m = 0; /* ההילה צמודה למסגרת הכרטיס עצמו (המסגרת הפנימית), בלי מסגרת חיצונית מרוחקת */
     halo.style.left = (fo.x - m) + 'px';
     halo.style.top = (fo.y - m) + 'px';
@@ -97,7 +99,7 @@
     var formPage = main.getBoundingClientRect().top + sy + haloTop;
     var fp = still ? 1 : clamp((sy + vh * 0.85 - formPage) / (haloH * 0.7 + vh * 0.05));   /* ההילה נוצרת בקצב הגלילה */
     var p = clamp(sy / Math.max(1, docH - vh));                                            /* ההתקדמות של הפס עד סוף העמוד */
-    var headY = hb + (vh * 0.8 - hb) * p;
+    var headY = hb + (vh - hb) * p;   /* הראש מגיע לקצה התחתון של המסך בסוף העמוד */
     var t = Math.round(headY - hb - TAIL);
     if (t !== lastT) { lastT = t; comet.style.transform = 'translate3d(0,' + t + 'px,0)'; }
     var o = still ? 0 : Math.round(clamp(sy / (vh * 0.15)) * 20);

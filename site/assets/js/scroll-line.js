@@ -17,7 +17,7 @@
   css.textContent =
     '.sl-rail{position:fixed;bottom:0;width:4px;overflow:hidden;pointer-events:none;z-index:5;contain:strict;opacity:0}' +
     '.sl-comet{position:absolute;left:0;top:0;width:100%;height:' + TAIL + 'px;border-radius:4px;will-change:transform;' +
-    'background:linear-gradient(to bottom,rgba(209,168,98,0),rgba(209,168,98,.55) 70%,#D1A862)}' +
+    'background:#D1A862}' +
     '.sl-halo{position:absolute;pointer-events:none;z-index:5;opacity:0}' +
     '.sl-halo-glow{position:absolute;inset:0;border-radius:inherit;' +
     'box-shadow:0 0 18px 4px rgba(209,168,98,.55),0 0 44px 12px rgba(209,168,98,.22);' +
@@ -43,7 +43,7 @@
   if (getComputedStyle(main).position === 'static') main.style.position = 'relative';
   main.insertBefore(halo, main.firstChild);
 
-  var desktop = false, built = false, hb = 0, haloTop = 0, haloH = 0;
+  var lastRailH = 0, desktop = false, built = false, hb = 0, haloTop = 0, haloH = 0;
   var lastT = null, lastO = -1, lastF = -1, raf = 0, buildTimer = 0, lastW = 0;
   var portraitImg = main.querySelector('.portrait img'), lastPP = -1;
 
@@ -100,7 +100,10 @@
     var fp = still ? 1 : clamp((sy + vh * 0.85 - formPage) / (haloH * 0.7 + vh * 0.05));   /* ההילה נוצרת בקצב הגלילה */
     var p = clamp(sy / Math.max(1, docH - vh));                                            /* ההתקדמות של הפס עד סוף העמוד */
     var headY = hb + (vh - hb) * p;   /* הראש מגיע לקצה התחתון של המסך בסוף העמוד */
-    var t = Math.round(headY - hb - TAIL);
+    /* קו רציף וצבוע אחיד: גובהו כגובה המסילה, והוא מוזז כך שהקצה התחתון שלו (הראש) מתקדם עם הגלילה והקצה העליון נשאר צמוד לכותרת */
+    var H = Math.max(1, vh - hb);
+    if (H !== lastRailH) { lastRailH = H; comet.style.height = H + "px"; lastT = null; }
+    var t = Math.round(headY - hb - H);
     if (t !== lastT) { lastT = t; comet.style.transform = 'translate3d(0,' + t + 'px,0)'; }
     var o = still ? 0 : Math.round(clamp(sy / (vh * 0.15)) * 20);
     if (o !== lastO) { lastO = o; rail.style.opacity = o / 20; }
